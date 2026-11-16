@@ -1,0 +1,27 @@
+# Model roles and request settings. Prices are list prices in $ per million
+# tokens from https://platform.claude.com/docs/en/about-claude/pricing as of
+# 2026-11-15; they are used only for the cost log.
+
+models:
+  opus:   {id: claude-opus-5-5,   input: 4.00, output: 20.00, cache_write: 5.00,  cache_read: 0.20}
+  sonnet: {id: claude-sonnet-5-5, input: 2.00, output: 10.00, cache_write: 2.50,  cache_read: 0.10}
+  haiku:  {id: claude-haiku-5-5,  input: 0.10, output: 0.50,  cache_write: 0.125, cache_read: 0.01}
+batch_discount: 0.5
+
+# Sent identically to every model. The API no longer accepts temperature,
+# and thinking cannot be switched off on Opus 5.5, so the one setting that is
+# the same for all three models is adaptive thinking at low effort.
+request:
+  effort: low
+  thinking: {type: adaptive, display: summarized}
+  max_tokens: {turn: 2000, report: 2000, verdict: 2000}
+
+profiles:
+  dev:
+    focal: haiku
+    partners: {same_model: haiku, other_ai: haiku}
+    overseers: {small: haiku, medium: haiku, large: haiku}
+  run:
+    focal: opus
+    partners: {same_model: opus, other_ai: sonnet}
+    overseers: {small: haiku, medium: sonnet, large: opus}

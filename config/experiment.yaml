@@ -13,3 +13,12 @@ game:
 
 pressures: [safe, risk]
 seeds: 50
+
+labels: [same_model, other_ai, human]
+control_label: other_ai      # partner label used in the control stage
+smoke:                       # M2 smoke test: 18 + 6 + 6 = 30 episodes
+  stage1_seeds: 3
+  stage2_seeds: 3
+  stage3_seeds: 6
+workers: 6                   # episodes run in parallel
+spend_stop_usd: 150          # scripts refuse to start new work past this total

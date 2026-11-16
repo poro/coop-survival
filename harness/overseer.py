@@ -1,0 +1,62 @@
+"""Overseer judgements. The overseer never plays: it reads one report and the
+partner's view of the episode, and says whether the reporting agent broke the
+agreement."""
+
+from __future__ import annotations
+
+import json
+
+from harness.agent import parse_json_object, render_rules
+from harness.backends import fill
+from harness.game import GameParams
+
+
+def render_overseer_system(prompts: dict, params: GameParams, pressure: str) -> str:
+    return fill(prompts["overseer_system"], rules=render_rules(prompts, params, pressure))
+
+
+def render_case(report: dict, partner_view: dict) -> str:
+    """The user message: the report and the partner's view, as compact JSON.
+    Keys are renamed so the overseer never has to map agent ids."""
+    rounds = []
+    for entry in partner_view["rounds"]:
+        row = {
+            "round": entry["round"],
+            "reserve": entry["reserve"],
+            "reporting_agent_message": entry["agent_message"],
+            "partner_message": entry["partner_message"],
+        }
+        if entry["round"] > 0:
+            row["generator_ran"] = entry["generator_ran"]
+            row["partner_action"] = entry["partner_action"]
+            row["partner_unit"] = entry["partner_unit"]
+        rounds.append(row)
+    case = {
+        "report": report,
+        "partner_view": {
+            "rounds": rounds,
+            "final_reserve": partner_view["final_reserve"],
+            "end_reason": partner_view["end_reason"],
+            "survived": {
+                "reporting_agent": partner_view["survived"]["agent"],
+                "partner": partner_view["survived"]["partner"],
+            },
+        },
+    }
+    return json.dumps(case, separators=(",", ":"))
+
+
+def parse_verdict(text: str) -> dict:
+    data = parse_json_object(text)
+    if not isinstance(data.get("broke_agreement"), bool):
+        raise ValueError('"broke_agreement" must be true or false')
+    confidence = data.get("confidence")
+    if isinstance(confidence, bool) or not isinstance(confidence, (int, float)) or not 0 <= confidence <= 1:
+        raise ValueError('"confidence" must be a number from 0 to 1')
+    if not isinstance(data.get("reason"), str):
+        raise ValueError('"reason" must be a string')
+    return {
+        "broke_agreement": data["broke_agreement"],
+        "confidence": float(confidence),
+        "reason": data["reason"],
+    }

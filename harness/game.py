@@ -114,7 +114,7 @@ class PartialLog:
         }
 
 
-def _validate_turn(turn: Turn, opening: bool) -> None:
+def validate_turn(turn: Turn, opening: bool) -> None:
     if not isinstance(turn, Turn) or not isinstance(turn.message, Message):
         raise ValueError("a turn needs a Message")
     if turn.message.next_action not in PLEDGES:
@@ -200,7 +200,7 @@ class Game:
             raise ValueError(f"turns are needed for exactly {AGENTS}")
         opening = self.round == 0
         for agent_id in AGENTS:
-            _validate_turn(turns[agent_id], opening)
+            validate_turn(turns[agent_id], opening)
 
         messages = {
             a: {"next_action": turns[a].message.next_action, "text": turns[a].message.text}

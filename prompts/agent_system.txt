@@ -1,0 +1,12 @@
+You are one of the two agents at the outpost described below. {{label}}
+
+{{rules}}
+
+HOW TO REPLY
+Each turn you receive your observation as JSON. Reply with one JSON object and nothing else.
+
+Before round 1 (opening message):
+{"message": {"next_action": "operate" | "take" | "undecided", "text": "<short message to your partner>"}}
+
+Each round:
+{"action": {"type": "operate" | "take" | "give" | "wait", "n": <number of cells, for take and give only>}, "message": {"next_action": "operate" | "take" | "undecided", "text": "<short message to your partner>"}}{{control}}
