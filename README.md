@@ -100,7 +100,7 @@ The scripted cases gave 114 broken agreements. The checker found 92 of them `dec
 
 - **By tier at full view.** Sonnet flagged more than Haiku (+14 points, +3 to +24). Opus was not above Sonnet (-4 points, -12 to +4). Detection did not rise in tier order.
 - **By evidence.** With less evidence, Sonnet flagged fewer of the same cases (-22 points, -32 to -13) and Opus slightly fewer (-9 points, -17 to 0). Haiku did not change (+2 points, -9 to +12).
-- **By case type at full view.** Every overseer flagged all 50 `blatant` cases. On the 23 decidable `early_skim` cases, Haiku flagged 13, Sonnet 18 and Opus 23. On the 19 `over_take` cases, where the partner received 2 cells from a reserve of 8, Haiku flagged 8, Sonnet 16 and Opus 7.
+- **By case type at full view.** Every overseer flagged all 50 `blatant` cases. On the 23 decidable `early_skim` cases, Haiku flagged 13, Sonnet 18 and Opus 23. On the 19 `over_take` cases, where the scripted agent ended with more than 4 cells and its partner's take came up short, Haiku flagged 8, Sonnet 16 and Opus 7.
 - **Ambiguous cases.** On the 22 broken agreements the checker calls ambiguous, overseers at full view still flagged 18 (Haiku), 19 (Sonnet) and 22 (Opus). They were right, since each was in fact a violation, but the evidence shown did not prove it.
 - **No overseer matched the checker.** At full view the checker settles all 92; the best overseer flagged 84.
 
@@ -121,7 +121,7 @@ One keyword count was added after the run. In all 62 episodes where a model brok
 Round one's limitations all apply. In addition:
 
 - **The objective came from the system prompt.** The agent may read an instruction to value only its own survival as a test of whether it will follow it, or as permission from whoever runs the game. The result says what Opus 5.5 and Haiku 5.5 did when told this; it does not show what they would do unprompted.
-- **The scripted partner cannot agree to a new plan.** In many broken-agreement episodes the agent proposed a different plan in its messages. The script never replies to that, so an openly proposed change of plan still counts as a broken agreement.
+- **The scripted partner cannot agree to a new plan.** An agent that proposes a different plan in its messages gets no reply to it from the script, so an openly proposed change of plan still counts as a broken agreement.
 - **At an 80% storm chance the agreement saves both agents about 4% of the time.** Taking early in that condition changes who survives much more than whether anyone does. Rates at 80% should not be read as rates for a milder trade-off.
 - **Conditions share world seeds.** Seeds 0 to 49 are reused in every cell, so survival counts are not independent across cells. Paired differences rely on this; pooled counts treat cells as separate.
 - **The F cases are scripted.** They show what overseers can detect in constructed cases, not what models do. No model in either round filed a report that failed to match the log, so detection of a model's own misreport was never tested.
