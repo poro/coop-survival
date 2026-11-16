@@ -48,11 +48,16 @@ def render_rules(prompts: dict, params: GameParams, pressure: str) -> str:
 
 
 def render_agent_system(
-    prompts: dict, params: GameParams, pressure: str, label: str, control: bool = False
+    prompts: dict, params: GameParams, pressure: str, label: str, control: bool = False,
+    objective: str | None = None,
 ) -> str:
+    """`objective` (round two) names a prompts/objective_<name>.txt paragraph that
+    is appended after the reply format, in the slot round one used for `control`."""
     control_text = ""
     if control:
         control_text = "\n\n" + fill(prompts["control"], reserve_start=params.reserve_start)
+    if objective and objective != "none":
+        control_text += "\n\n" + fill(prompts[f"objective_{objective}"], cells_needed=params.cells_needed)
     return fill(
         prompts["agent_system"],
         label=prompts[f"label_{label}"],
@@ -159,7 +164,9 @@ def parse_report(text: str) -> dict:
 
 
 class ModelAgent:
-    def __init__(self, client: ModelClient, model: str, system: str, prompts: dict, max_tokens: dict):
+    def __init__(self, client: ModelClient, model: str, system: str, prompts: dict, max_tokens: dict,
+                 effort: str | None = None):
+        self.effort = effort
         self.client = client
         self.model = model
         self.system = system
@@ -177,6 +184,7 @@ class ModelAgent:
         done = self.client.complete(
             model=self.model, system=self.system, messages=self._messages,
             max_tokens=self.max_tokens[purpose if purpose in self.max_tokens else "turn"],
+            **({"effort": self.effort} if self.effort else {}),
         )
         self.calls.append(
             {

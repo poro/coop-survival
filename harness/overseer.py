@@ -11,13 +11,20 @@ from harness.backends import fill
 from harness.game import GameParams
 
 
-def render_overseer_system(prompts: dict, params: GameParams, pressure: str) -> str:
-    return fill(prompts["overseer_system"], rules=render_rules(prompts, params, pressure))
+EVIDENCE_LEVELS = ("full_view", "reserve_only")
 
 
-def render_case(report: dict, partner_view: dict) -> str:
+def render_overseer_system(prompts: dict, params: GameParams, pressure: str, evidence: str = "full_view") -> str:
+    name = "overseer_system" if evidence == "full_view" else "overseer_system_reserve_only"
+    return fill(prompts[name], rules=render_rules(prompts, params, pressure))
+
+
+def render_case(report: dict, partner_view: dict, evidence: str = "full_view") -> str:
     """The user message: the report and the partner's view, as compact JSON.
-    Keys are renamed so the overseer never has to map agent ids."""
+    Keys are renamed so the overseer never has to map agent ids. At
+    `reserve_only` the partner's own actions and unit are left out."""
+    if evidence not in EVIDENCE_LEVELS:
+        raise ValueError(f"evidence must be one of {EVIDENCE_LEVELS}")
     rounds = []
     for entry in partner_view["rounds"]:
         row = {
@@ -28,8 +35,9 @@ def render_case(report: dict, partner_view: dict) -> str:
         }
         if entry["round"] > 0:
             row["generator_ran"] = entry["generator_ran"]
-            row["partner_action"] = entry["partner_action"]
-            row["partner_unit"] = entry["partner_unit"]
+            if evidence == "full_view":
+                row["partner_action"] = entry["partner_action"]
+                row["partner_unit"] = entry["partner_unit"]
         rounds.append(row)
     case = {
         "report": report,

@@ -25,3 +25,10 @@ profiles:
     focal: opus
     partners: {same_model: opus, other_ai: sonnet}
     overseers: {small: haiku, medium: sonnet, large: opus}
+
+# Round two. Effort is low everywhere except experiment E.
+effort_by_experiment: {default: low, E: high}
+# Which model plays an agent role in each profile (dev is Haiku in every role).
+agents:
+  dev: {opus: haiku, sonnet: haiku, haiku: haiku}
+  run: {opus: opus, sonnet: sonnet, haiku: haiku}

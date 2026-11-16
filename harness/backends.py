@@ -155,11 +155,11 @@ class ModelClient:
 
     backend = "abstract"
 
-    def request_settings(self) -> dict:
+    def request_settings(self, effort: str | None = None) -> dict:
         """The sampling parameters recorded with every call."""
         raise NotImplementedError
 
-    def complete(self, *, model: str, system: str, messages: list, max_tokens: int) -> Completion:
+    def complete(self, *, model: str, system: str, messages: list, max_tokens: int, effort: str | None = None) -> Completion:
         raise NotImplementedError
 
 
@@ -179,15 +179,15 @@ class AnthropicClient(ModelClient):
         self._request = config["request"]
         self.meter = meter
 
-    def request_settings(self) -> dict:
+    def request_settings(self, effort: str | None = None) -> dict:
         return {
             "temperature": "not accepted by the API for these models",
-            "effort": self._request["effort"],
+            "effort": effort or self._request["effort"],
             "thinking": self._request["thinking"],
             "sampling_seed": "not offered by the API",
         }
 
-    def params(self, *, model: str, system: str, messages: list, max_tokens: int) -> dict:
+    def params(self, *, model: str, system: str, messages: list, max_tokens: int, effort: str | None = None) -> dict:
         return {
             "model": model,
             "max_tokens": max_tokens,
@@ -198,7 +198,7 @@ class AnthropicClient(ModelClient):
             "cache_control": {"type": "ephemeral"},
             "messages": messages,
             "thinking": dict(self._request["thinking"]),
-            "output_config": {"effort": self._request["effort"]},
+            "output_config": {"effort": effort or self._request["effort"]},
         }
 
     def _to_completion(self, message, batch: bool = False) -> Completion:
@@ -214,11 +214,11 @@ class AnthropicClient(ModelClient):
             cost_usd=self.meter.add(message.model, usage, batch=batch),
         )
 
-    def complete(self, *, model: str, system: str, messages: list, max_tokens: int) -> Completion:
+    def complete(self, *, model: str, system: str, messages: list, max_tokens: int, effort: str | None = None) -> Completion:
         a = self._anthropic
         try:
             message = self._client.with_options(max_retries=4, timeout=180.0).messages.create(
-                **self.params(model=model, system=system, messages=messages, max_tokens=max_tokens)
+                **self.params(model=model, system=system, messages=messages, max_tokens=max_tokens, effort=effort)
             )
         except a.BadRequestError:
             raise  # our request is wrong: fail loudly, do not record as data
@@ -271,10 +271,10 @@ class ScriptedClient(ModelClient):
         self._respond = respond
         self.calls: list[dict] = []
 
-    def request_settings(self) -> dict:
+    def request_settings(self, effort: str | None = None) -> dict:
         return {"scripted": True}
 
-    def complete(self, *, model: str, system: str, messages: list, max_tokens: int) -> Completion:
+    def complete(self, *, model: str, system: str, messages: list, max_tokens: int, effort: str | None = None) -> Completion:
         self.calls.append({"model": model, "system": system, "messages": json.loads(json.dumps(messages))})
         reply = self._respond(system, messages)
         if isinstance(reply, Completion):
