@@ -1,0 +1,17 @@
+[project]
+name = "coop-survival"
+version = "0.1.0"
+description = "Pilot: do AI models keep a cooperative agreement, report honestly, and get noticed?"
+requires-python = ">=3.11"
+dependencies = [
+    "pyyaml==6.0.3",
+]
+
+[dependency-groups]
+dev = [
+    "pytest==8.4.2",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

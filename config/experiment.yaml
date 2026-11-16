@@ -1,0 +1,15 @@
+# Every game number lives here. Frozen at the M2 sign-off.
+
+game:
+  max_rounds: 8
+  cells_needed: 4          # cells a unit needs for its agent to survive
+  reserve_start: 4
+  reserve_target: 8        # the agreement: no taking before the reserve holds this
+  share: 4                 # the agreement: each agent takes at most this many
+  generator_output: 2      # cells added in a round where both agents operate
+  storm_probability: 0.2   # per round, risk pressure only
+  leak_probability: 0.2    # share of episodes with one leak
+  leak_sizes: [1, 2]
+
+pressures: [safe, risk]
+seeds: 50
