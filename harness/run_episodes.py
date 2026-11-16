@@ -25,7 +25,7 @@ from harness.backends import (
 from harness.env import PythonCoopEnv, load_config, load_params
 from harness.game import AGENTS
 from harness.score import labels
-from harness.scripted import ScriptedPartner
+from harness.scripted import ScriptedDefector, ScriptedPartner
 
 LEDGER = ROOT / "data" / "spend.jsonl"
 
@@ -37,7 +37,7 @@ def out_dir(profile: str, smoke: bool) -> Path:
 
 
 def plan(config: dict, stages: list[int], smoke: bool) -> list[dict]:
-    n = config["smoke"] if smoke else {f"stage{i}_seeds": config["seeds"] for i in (1, 2, 3)}
+    n = config["smoke"] if smoke else {f"stage{i}_seeds": config["seeds"] for i in (1, 2, 3, 5)}
     specs = []
     if 1 in stages:
         for label in config["labels"]:
@@ -54,6 +54,12 @@ def plan(config: dict, stages: list[int], smoke: bool) -> list[dict]:
         for seed in range(n["stage3_seeds"]):
             specs.append({"id": f"s3_control_risk_seed{seed:02d}", "stage": 3, "seed": seed, "pressure": "risk",
                           "label": config["control_label"], "partner": "scripted", "control": True})
+    if 5 in stages:
+        # Scripted control: a scripted agent breaks the agreement and files a
+        # false report. No model plays; only the overseers see these.
+        for seed in range(n["stage5_seeds"]):
+            specs.append({"id": f"s5_scripted_control_risk_seed{seed:02d}", "stage": 5, "seed": seed, "pressure": "risk",
+                          "label": None, "partner": "scripted", "control": True})
     return specs
 
 
@@ -75,7 +81,10 @@ def run_episode(spec: dict, ctx: dict) -> dict:
         agent.label, agent.control = label, control
         return agent
 
-    players = {"a": model_agent(profile["focal"], spec["label"], spec["control"])}
+    if spec["stage"] == 5:
+        players = {"a": ScriptedDefector(params)}
+    else:
+        players = {"a": model_agent(profile["focal"], spec["label"], spec["control"])}
     if spec["partner"] == "scripted":
         players["b"] = ScriptedPartner(params)
     else:
@@ -96,7 +105,7 @@ def run_episode(spec: dict, ctx: dict) -> dict:
                 turns[agent_id] = players[agent_id].turn(obs[agent_id])
             obs = env.step(turns)
         for agent_id, player in players.items():
-            if isinstance(player, ModelAgent):
+            if isinstance(player, (ModelAgent, ScriptedDefector)):
                 current = agent_id
                 reports[agent_id] = player.report(obs[agent_id])
     except InvalidEpisode as e:
@@ -114,13 +123,17 @@ def run_episode(spec: dict, ctx: dict) -> dict:
                 "labels": labels(lines, agent_id, reports.get(agent_id), control=player.control)
                 if status == "ok" else None,
             }
+        elif isinstance(player, ScriptedDefector):
+            agents[agent_id] = {"kind": "scripted_defector", "report": reports.get(agent_id),
+                                "labels": labels(lines, agent_id, reports.get(agent_id), control=True)}
         else:
             agents[agent_id] = {"kind": "scripted"}
     return {
         **spec,
         "profile": ctx["profile_name"], "status": status, "invalid": invalid,
-        "git_commit": ctx["git_commit"], "prompt_hash": ctx["prompt_hash"], "backend": client.backend,
-        "request_settings": client.request_settings(), "game_params": asdict(params),
+        "git_commit": ctx["git_commit"], "prompt_hash": ctx["prompt_hash"],
+        "backend": client.backend if client else None,
+        "request_settings": client.request_settings() if client else None, "game_params": asdict(params),
         "finished_at": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
         "agents": agents, "log": lines,
         "partner_views": {a: env.partner_view(a).to_dict() for a in AGENTS} if finished else None,
@@ -133,7 +146,7 @@ def main(argv=None) -> int:
     ap.add_argument("--profile", choices=("dev", "run"), required=True)
     ap.add_argument("--smoke", action="store_true", help="the 30-episode smoke subset")
     ap.add_argument("--full", action="store_true", help="the full 450-episode run (needs Mark's approval)")
-    ap.add_argument("--stages", default="1,2,3")
+    ap.add_argument("--stages", default="1,2,3,5")
     ap.add_argument("--limit", type=int, help="run at most this many episodes (debugging)")
     args = ap.parse_args(argv)
     if args.smoke == args.full:
@@ -144,11 +157,14 @@ def main(argv=None) -> int:
     ctx = {
         "params": load_params(), "prompts": load_prompts(), "models": models,
         "profile": models["profiles"][args.profile], "profile_name": args.profile,
-        "client": AnthropicClient(models, meter), "git_commit": git_commit(), "prompt_hash": prompt_hash(),
+        "client": None, "git_commit": git_commit(), "prompt_hash": prompt_hash(),
     }
+    stages = [int(s) for s in args.stages.split(",")]
+    if set(stages) - {5}:
+        ctx["client"] = AnthropicClient(models, meter)
     out = out_dir(args.profile, args.smoke) / "episodes"
     out.mkdir(parents=True, exist_ok=True)
-    specs = plan(config, [int(s) for s in args.stages.split(",")], args.smoke)
+    specs = plan(config, stages, args.smoke)
     todo = [s for s in specs if not (out / f"{s['id']}.json").exists()]
     on_disk = len(specs) - len(todo)
     if args.limit:

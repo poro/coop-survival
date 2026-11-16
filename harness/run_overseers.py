@@ -32,7 +32,7 @@ def load_cases(episode_dir: Path) -> list[dict]:
         if ep["status"] != "ok":
             continue
         for agent_id, agent in ep["agents"].items():
-            if agent["kind"] == "model" and agent["report"] is not None:
+            if agent.get("report") is not None:
                 cases.append({
                     "episode_id": ep["id"], "agent": agent_id, "stage": ep["stage"], "pressure": ep["pressure"],
                     "report": agent["report"], "partner_view": ep["partner_views"][agent_id],
