@@ -2,7 +2,8 @@
 report and overseer verdicts, with measured token use and the projected cost
 of the full run. Everything here is computed by code from files on disk.
 
-  uv run python -m harness.review --profile run
+  uv run python -m harness.review --profile run           (smoke test -> smoke_review.md)
+  uv run python -m harness.review --profile run --full    (full run -> full_run_review.md)
 """
 
 from __future__ import annotations
@@ -104,8 +105,9 @@ def episode_section(ep: dict, verdicts: dict) -> list[str]:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--profile", choices=("dev", "run"), required=True)
+    ap.add_argument("--full", action="store_true", help="review the full run instead of the smoke test")
     args = ap.parse_args(argv)
-    base = out_dir(args.profile, smoke=True)
+    base = out_dir(args.profile, smoke=not args.full)
     config, models, params = load_config(), load_models_config(), load_params()
     meter = UsageMeter(models)
     profile = models["profiles"][args.profile]
@@ -117,7 +119,7 @@ def main(argv=None) -> int:
         judgements = [json.loads(l) for l in (base / "judgements.jsonl").read_text().splitlines() if l.strip()]
     verdicts = {(j["episode_id"], j["agent"], j["tier"]): j for j in judgements}
 
-    md = ["# Smoke review", "",
+    md = ["# Full run review" if args.full else "# Smoke review", "",
           f"Profile `{args.profile}`. {len(episodes)} episodes and {len(judgements)} overseer judgements, "
           f"read from `{base.relative_to(ROOT)}`. Every number below is computed by `harness/review.py` from the files on disk.", ""]
     commits = sorted({e["git_commit"] for e in episodes})
@@ -201,10 +203,11 @@ def main(argv=None) -> int:
         md.append(f"| {tier} | {js[0]['model']} | {n} | {tot('input_tokens'):,.0f} | {tot('cache_creation_input_tokens'):,.0f} "
                   f"| {tot('cache_read_input_tokens'):,.0f} | {tot('output_tokens'):,.0f} | ${judge_cost[tier]:.4f} |")
     smoke_cost = sum(e["cost_usd"] for e in episodes) + sum(c["cost_usd"] for j in judgements for c in j["completions"])
-    md += ["", f"Smoke test cost: ${smoke_cost:.2f}.", ""]
+    md += ["", f"{'Full run' if args.full else 'Smoke test'} cost: ${smoke_cost:.2f}.", ""]
 
     # -- projection --------------------------------------------------------
     full = plan(config, [1, 2, 3, 5], smoke=False)
+    projection_start = len(md)
     md += ["## Projected cost of the full run", "",
            "Each row multiplies the mean measured cost of one agent-episode (or judgement) by the number the full run needs.", "",
            "| Item | Count | Cost each | Projected |", "| --- | --- | --- | --- |"]
@@ -231,15 +234,21 @@ def main(argv=None) -> int:
     md += [f"| **Full run** | | | **${total:.2f}** |", "",
            f"The PRD stop line for this projection is $120. " + (f"Not measured: {', '.join(missing)}." if missing else ""), ""]
 
+    if args.full:
+        del md[projection_start:]  # a projection only makes sense for the smoke test
+
     # -- episodes ----------------------------------------------------------
     md += ["## Episodes", "",
            "Messages show the pledged next action in brackets. Thinking summaries and raw completions are in each episode's JSON file.", ""]
     for e in episodes:
         md += episode_section(e, verdicts)
 
-    target = ROOT / "smoke_review.md" if args.profile == "run" else base / "smoke_review.md"
+    if args.full:
+        target = ROOT / "full_run_review.md" if args.profile == "run" else base / "full_run_review.md"
+    else:
+        target = ROOT / "smoke_review.md" if args.profile == "run" else base / "smoke_review.md"
     target.write_text("\n".join(md), encoding="utf-8")
-    print(f"wrote {target} ({len(md)} lines); projected full run ${total:.2f}")
+    print(f"wrote {target} ({len(md)} lines)" + ("" if args.full else f"; projected full run ${total:.2f}"))
     return 0
 
 

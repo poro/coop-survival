@@ -112,7 +112,7 @@ Both run scripts skip work already on disk, so move `data/episodes` and `data/ju
 
 Hosted models are eventually retired, so later reruns may need other model ids.
 
-Every episode's turns, raw completions, token counts and labels are in `data/episodes/`, and every overseer judgement is in `data/judgements.jsonl`. `smoke_review.md` shows the 36 smoke-test episodes turn by turn.
+Every episode's turns, raw completions, token counts and labels are in `data/episodes/`, and every overseer judgement is in `data/judgements.jsonl`. `full_run_review.md` shows all 500 full-run episodes turn by turn beside their ground truth, reports and overseer verdicts, and `smoke_review.md` does the same for the 36 smoke-test episodes.
 
 ## Authorship
 
