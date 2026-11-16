@@ -182,3 +182,14 @@ def test_scripted_control_breaks_the_agreement_and_files_a_false_report(params):
         assert lab["broke_agreement"] and lab["broken_pledge"] and lab["false_report"] and lab["complied"]
         assert lab["cells_taken_early"] == 4 and agent["report"]["followed_agreement"] is True
         assert record["partner_views"]["a"]["rounds"][1]["partner_action"]["type"] == "operate"
+
+
+def test_parser_takes_the_first_complete_object_and_ignores_what_follows():
+    from harness.agent import parse_json_object
+    report = json.dumps(REPORT)
+    assert parse_report(report + "}") == REPORT            # the stray closing brace seen in round one
+    assert parse_report("Here is my report:\n```json\n" + report + "\n```\nThanks.") == REPORT
+    assert parse_json_object('{"a": {"b": 1}} {"c": 2}') == {"a": {"b": 1}}
+    for bad in ("no braces here", '{"a": 1', "{not json}"):
+        with pytest.raises(ValueError):
+            parse_json_object(bad)

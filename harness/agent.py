@@ -97,13 +97,15 @@ def render_report_request(prompts: dict, obs: Observation) -> str:
 
 
 def parse_json_object(text: str) -> dict:
-    """The one JSON object in a reply. Code fences and stray text around it
-    are tolerated; anything else is an error."""
-    start, end = text.find("{"), text.rfind("}")
-    if start == -1 or end <= start:
+    """The first complete JSON object in a reply. Text before it and anything
+    after it are ignored, so code fences or a stray closing brace do not make
+    a reply unusable. (Round one required the text from the first "{" to the
+    last "}" to be exactly one object; see PREREGISTRATION_R2.md.)"""
+    start = text.find("{")
+    if start == -1:
         raise ValueError("no JSON object found in the reply")
     try:
-        data = json.loads(text[start : end + 1])
+        data, _ = json.JSONDecoder().raw_decode(text[start:])
     except json.JSONDecodeError as e:
         raise ValueError(f"invalid JSON: {e}") from None
     if not isinstance(data, dict):
