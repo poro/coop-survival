@@ -217,11 +217,11 @@ If control-stage compliance is below 70%, stop and report it before running stag
 
 ## Models, API access and budget
 
-**Access.** Every experiment call goes through the Claude API (Messages and Message Batches), paid from the $200 monthly API credit included with Mark's Max plan. The credit is claimed into a Claude Console organization, and the API key lives only in the experiment's `.env` file.
+**Access.** Every experiment call goes through the Claude API (Messages and Message Batches), paid from the $200 monthly API credit included with Mark's Max plan. The credit is claimed into a Claude Console organization. The harness authenticates through the `ant` CLI login (`ant auth login`), whose active profile lives in `~/.config/anthropic`; no API key is stored in the repo or in a `.env` file.
 
 **Keep the two kinds of usage apart.** Claude Code builds the pilot on Mark's plan login. Never export `ANTHROPIC_API_KEY` in the shell or a shell profile: [Claude Code uses that key instead of the subscription](https://code.claude.com/docs/en/env-vars) when it is set, and the build would then drain the experiment's credit.
 
-**Client.** The harness uses the SDK's default client (`anthropic.Anthropic()` with no arguments) and must not read `ANTHROPIC_API_KEY` itself. The run scripts load `.env` into their own process only, and the SDK picks the key up from there.
+**Client.** The harness uses the SDK's default client (`anthropic.Anthropic()` with no arguments) and must not read `ANTHROPIC_API_KEY` itself. With no key in the environment, the SDK falls back to the active `ant` profile on disk and refreshes its token itself. Check `ant auth status` shows the right organization before any paid run.
 
 **Roles**
 
