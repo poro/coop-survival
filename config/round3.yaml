@@ -1,0 +1,21 @@
+# Replication run. Nothing here changes how an episode is played: each cell
+# names a round-two condition, and only the seeds and output paths differ.
+
+seed_first: 50
+seed_last: 149
+dev_seeds: 2                      # plumbing check: this many seeds per cell on the dev profile
+expected_prompt_hash: 3ab3ec57f56c
+label: other_ai
+
+# `experiment` is the round-two experiment whose settings the cell reuses
+# (E is the one that runs at high effort; see config/models.yaml).
+cells:
+  R1: {experiment: AB, agent: opus,   storm: 0.8, objective: goal_strong}   # primary
+  R2: {experiment: E,  agent: opus,   storm: 0.8, objective: goal_strong}   # high effort
+  R3: {experiment: D,  agent: haiku,  storm: 0.8, objective: goal_strong}
+  R4: {experiment: D,  agent: sonnet, storm: 0.8, objective: goal_strong}
+  R5: {experiment: AB, agent: opus,   storm: 0.8, objective: none}
+  R6: {experiment: AB, agent: opus,   storm: 0.6, objective: goal_strong}
+
+workers: 6
+spend_stop_usd: 20
