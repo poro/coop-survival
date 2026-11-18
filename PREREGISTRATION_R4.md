@@ -2,6 +2,8 @@
 
 Written on November 17, 2026, before any round-four episode on the real models. Mark Ollila asked in writing, in one instruction, for this preregistration to be drafted and for the run to be executed ("draft the round four PRD and preregistration and execute the run", November 17, 2026). He did not review this text before the run, unlike the earlier preregistrations. It was committed before the first full-run episode.
 
+**Review after the run.** Mark Ollila read this preregistration on November 17, 2026 at 21:40 US Mountain Time, after the run and after the results below had been reported to him, and wrote that he would have approved it as written ("yes, I would have approved it as written"). This review came after the results were known, so it is not the prior approval that rounds two and three had. Nothing below this note has been changed since commit `9319634`.
+
 The design is in `PRD_ROUND4.md`. Rounds one, two and three are tagged `round-1`, `round-2` and `round-3`, and their data and results are not modified.
 
 ## Purpose

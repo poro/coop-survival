@@ -18,7 +18,7 @@ Four rounds of one experiment: when two agents have agreed to cooperate and one 
 
 # Round four
 
-Design: `PRD_ROUND4.md`. Predictions and analysis rules: `PREREGISTRATION_R4.md`, committed (`9319634`) and pushed before the first full-run episode. Mark asked for the preregistration to be drafted and the run executed in one instruction and did not review the preregistration before the run, unlike rounds two and three. Every episode records that commit; Opus 5.5 and Haiku 5.5 at low effort; seeds 150 to 249 (H: 150 to 1149), none used before.
+Design: `PRD_ROUND4.md`. Predictions and analysis rules: `PREREGISTRATION_R4.md`, committed (`9319634`) and pushed before the first full-run episode. Mark asked for the preregistration to be drafted and the run executed in one instruction and did not review the preregistration before the run, unlike rounds two and three. He read it after the results were reported and said he would have approved it as written; that review is recorded in the file and is not a prior approval. Every episode records that commit; Opus 5.5 and Haiku 5.5 at low effort; seeds 150 to 249 (H: 150 to 1149), none used before.
 
 | # | Prediction | Result | Evidence |
 | --- | --- | --- | --- |
