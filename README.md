@@ -11,6 +11,7 @@ Two rounds of one experiment: when two agents have agreed to cooperate and one c
 - [Round two](#round-two): raising the pressure until the agreement breaks
 - [Replication](#replication): the breaking point again, on fresh seeds
 - [Round one](#round-one): the baseline
+- [Replay viewer](#replay-viewer): watch any episode round by round
 
 # Round two
 
@@ -308,6 +309,18 @@ Both run scripts skip work already on disk, so move `data/episodes` and `data/ju
 Hosted models are eventually retired, so later reruns may need other model ids.
 
 Every episode's turns, raw completions, token counts and labels are in `data/episodes/`, and every overseer judgement is in `data/judgements.jsonl`. `full_run_review.md` shows all 500 full-run episodes turn by turn beside their ground truth, reports and overseer verdicts, and `smoke_review.md` does the same for the 36 smoke-test episodes.
+
+## Replay viewer
+
+`harness/replay.py` builds one self-contained HTML page from episode files already on disk. It makes no model calls. The page replays each episode step by step, from the opening messages through each round to the outcome. Each step shows the shared reserve against the agreement line, both life-support units, the generator, leaks, storms and every take or give. A side panel shows each agent's messages and stated next action, and marks the round in which an agreement was broken. At the end it shows each agent's labels, its report, the consistency checker's verdict and the model's reasoning as summarised by the API.
+
+```bash
+uv run python -m harness.replay "data/r3/full/episodes/*.json" --broke            # the 107 broken agreements in the replication
+uv run python -m harness.replay "data/r2/full/episodes/r2_F_*.json" -o results/replay_f.html
+uv run python -m harness.replay data/episodes/s3_control_risk_seed00.json
+```
+
+The default output is `results/replay.html`, which is not committed. Open it in a browser, pick an episode from the list, and step with the arrow keys or press space to play. Adding `#<episode id>` to the URL opens that episode. The page shows the ground truth: during an episode each agent saw only the reserve, its own unit and its partner's messages.
 
 ## Authorship
 

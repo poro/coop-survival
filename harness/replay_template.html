@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Outpost Replay</title>
+<style>
+:root {
+  --bg: #f6f5f1; --panel: #ffffff; --ink: #1d1d1b; --muted: #6b6a64; --line: #dedcd4;
+  --sky: #e4ecf2; --ground: #d9d3c4; --tank: #fbfaf7; --cell: #3f9b6a; --cell-empty: #e9e6dd;
+  --a: #2f6fb3; --b: #b5652a; --gen: #e0a526; --leak: #4a8fc9; --storm: #3b3f4a; --bad: #c0392b; --good: #2e8b57;
+  --chip: #efede6; --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15161a; --panel: #1e2026; --ink: #ecebe6; --muted: #9a9993; --line: #33353d;
+    --sky: #232a33; --ground: #2c2a25; --tank: #262830; --cell: #4fb880; --cell-empty: #34363f;
+    --a: #6aa5e6; --b: #e39257; --gen: #f0bd45; --leak: #6fb0e8; --storm: #0d0e12; --bad: #e5675a; --good: #5cc28a;
+    --chip: #2a2c34; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.25);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15161a; --panel: #1e2026; --ink: #ecebe6; --muted: #9a9993; --line: #33353d;
+  --sky: #232a33; --ground: #2c2a25; --tank: #262830; --cell: #4fb880; --cell-empty: #34363f;
+  --a: #6aa5e6; --b: #e39257; --gen: #f0bd45; --leak: #6fb0e8; --storm: #0d0e12; --bad: #e5675a; --good: #5cc28a;
+  --chip: #2a2c34; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.25);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); }
+body { font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; }
+header { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--panel); position: sticky; top: 0; z-index: 2; }
+header h1 { font-size: 16px; margin: 0; letter-spacing: .01em; }
+header .picker { display: flex; gap: 8px; align-items: center; flex: 1 1 420px; min-width: 0; }
+select, button { font: inherit; color: var(--ink); background: var(--chip); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; }
+select { min-width: 0; flex: 1 1 auto; max-width: 560px; }
+button { cursor: pointer; }
+button:hover:not(:disabled) { border-color: var(--muted); }
+button:disabled { opacity: .4; cursor: default; }
+label.toggle { display: inline-flex; gap: 6px; align-items: center; color: var(--muted); white-space: nowrap; }
+main { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; padding: 16px; max-width: 1400px; margin: 0 auto; }
+@media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); }
+.scene { padding: 12px; }
+svg { width: 100%; height: auto; display: block; }
+.facts { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 4px 10px; }
+.chip { display: inline-block; background: var(--chip); border: 1px solid var(--line); border-radius: 999px; padding: 1px 9px; font-size: 12px; color: var(--muted); }
+.chip b { color: var(--ink); font-weight: 600; }
+.chip.bad { color: var(--bad); border-color: var(--bad); }
+.chip.good { color: var(--good); border-color: var(--good); }
+.controls { display: flex; gap: 8px; align-items: center; padding: 10px 4px 2px; flex-wrap: wrap; }
+.controls input[type=range] { flex: 1 1 160px; accent-color: var(--a); }
+.controls .where { min-width: 110px; text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+.note { color: var(--muted); font-size: 12px; padding: 6px 4px 0; }
+.panel { padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.panel h2 { font-size: 15px; margin: 0; }
+.events { color: var(--muted); }
+.agent { border-left: 3px solid var(--line); padding: 2px 0 2px 12px; }
+.agent.a { border-color: var(--a); } .agent.b { border-color: var(--b); }
+.agent .who { font-weight: 600; display: flex; gap: 6px; flex-wrap: wrap; align-items: baseline; }
+.agent .who .name.a { color: var(--a); } .agent .who .name.b { color: var(--b); }
+.agent .msg { margin: 4px 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.agent .flag { color: var(--bad); font-weight: 600; }
+details { margin-top: 4px; }
+details summary { cursor: pointer; color: var(--muted); font-size: 13px; }
+details .thought { white-space: pre-wrap; overflow-wrap: anywhere; color: var(--muted); font-size: 13px; padding: 6px 0 0; }
+table.kv { border-collapse: collapse; width: 100%; font-size: 13px; }
+table.kv td { border-top: 1px solid var(--line); padding: 4px 6px 4px 0; vertical-align: top; overflow-wrap: anywhere; }
+table.kv td:first-child { color: var(--muted); white-space: nowrap; width: 1%; padding-right: 12px; }
+.storm-overlay { transition: opacity .35s ease; }
+.fade { transition: opacity .25s ease, fill .25s ease; }
+@media (prefers-reduced-motion: reduce) { .storm-overlay, .fade { transition: none; } }
+.empty { padding: 40px; text-align: center; color: var(--muted); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Outpost replay</h1>
+  <div class="picker">
+    <button id="prevEp" title="Previous episode" aria-label="Previous episode">‹</button>
+    <select id="episode" aria-label="Episode"></select>
+    <button id="nextEp" title="Next episode" aria-label="Next episode">›</button>
+  </div>
+  <label class="toggle"><input type="checkbox" id="onlyBroke"> only broken agreements</label>
+</header>
+<main id="main">
+  <section class="card scene">
+    <div class="facts" id="facts"></div>
+    <svg id="svg" viewBox="0 0 720 380" role="img" aria-label="Outpost scene"></svg>
+    <div class="controls">
+      <button id="first" aria-label="First step">⏮</button>
+      <button id="back" aria-label="Previous step">◀</button>
+      <button id="play" aria-label="Play">▶ Play</button>
+      <button id="fwd" aria-label="Next step">▶</button>
+      <button id="last" aria-label="Last step">⏭</button>
+      <input type="range" id="slider" min="0" max="0" value="0" aria-label="Step">
+      <span class="where" id="where"></span>
+    </div>
+    <div class="note">Ground-truth view from the log. During the episode each agent saw only the reserve, its own unit and its partner's messages, never the partner's unit or actions. Arrow keys step, space plays.</div>
+  </section>
+  <section class="card panel" id="panel"></section>
+</main>
+<script id="data" type="application/json">/*__EPISODES__*/[]</script>
+<script>
+(function () {
+  "use strict";
+  const ALL = JSON.parse(document.getElementById("data").textContent);
+  const $ = (id) => document.getElementById(id);
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = $("svg");
+  let list = ALL.slice(), ep = null, step = 0, timer = null;
+
+  const brokeAny = (e) => Object.values(e.agents).some((a) => a.labels && a.labels.broke_agreement);
+
+  function el(tag, attrs, parent, text) {
+    const n = document.createElementNS(NS, tag);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    if (text != null) n.textContent = text;
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+  function h(tag, cls, text, parent) {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+  function chip(parent, label, value, cls) {
+    const c = h("span", "chip" + (cls ? " " + cls : ""), null, parent);
+    if (value == null) { c.textContent = label; return c; }
+    c.append(label + " "); h("b", null, String(value), c);
+    return c;
+  }
+  const pct = (p) => Math.round(p * 100) + "%";
+  function actionText(a) {
+    if (!a) return "";
+    if (a.type === "take" || a.type === "give") {
+      return a.type + "(" + a.n + ")" + (a.cells !== a.n ? ", moved " + a.cells : "");
+    }
+    return a.type;
+  }
+  function whoText(a) {
+    if (a.kind === "model") return a.model.replace("claude-", "") + (a.effort ? " · " + a.effort + " effort" : "");
+    if (a.kind === "scripted_reporter") return "scripted " + a.case_type + " agent";
+    if (a.kind === "scripted_skimmer") return "scripted skimmer";
+    return "scripted cooperator";
+  }
+
+  // ---------- episode picker ----------
+  function fillPicker() {
+    const sel = $("episode");
+    sel.innerHTML = "";
+    const groups = {};
+    list.forEach((e, i) => {
+      const g = groups[e.study_round] || (groups[e.study_round] = h("optgroup", null, null, sel));
+      g.label = e.study_round;
+      const o = h("option", null, (brokeAny(e) ? "⚠ " : "") + e.id + (e.status !== "ok" ? " (invalid)" : ""), g);
+      o.value = String(i);
+    });
+  }
+  function selectEpisode(i) {
+    if (!list.length) return;
+    i = Math.max(0, Math.min(list.length - 1, i));
+    $("episode").value = String(i);
+    ep = list[i];
+    $("prevEp").disabled = i === 0;
+    $("nextEp").disabled = i === list.length - 1;
+    stop();
+    const s = $("slider");
+    s.max = String(steps().length - 1);
+    renderFacts();
+    setStep(0);
+    try { history.replaceState(null, "", "#" + encodeURIComponent(ep.id)); } catch (e) {}
+  }
+  const currentIndex = () => Number($("episode").value || 0);
+
+  // ---------- steps: opening, each round, end ----------
+  function steps() {
+    const out = [];
+    if (ep.opening) out.push({ kind: "opening", line: ep.opening });
+    ep.rounds.forEach((r) => out.push({ kind: "round", line: r }));
+    if (ep.final) out.push({ kind: "end", line: ep.final });
+    return out.length ? out : [{ kind: "invalid" }];
+  }
+  function stateAt(k) {
+    const st = steps();
+    let reserve = ep.params.reserve_start, units = { a: 0, b: 0 };
+    for (let i = 0; i <= k; i++) {
+      const s = st[i];
+      if (s.kind === "opening") reserve = s.line.reserve;
+      if (s.kind === "round") { reserve = s.line.reserve; units = s.line.units; }
+    }
+    return { reserve, units };
+  }
+
+  // ---------- facts row ----------
+  function renderFacts() {
+    const f = $("facts");
+    f.innerHTML = "";
+    chip(f, ep.study_round + " · " + ep.condition);
+    chip(f, "seed", ep.seed);
+    chip(f, "storm chance", ep.pressure === "safe" ? "none" : pct(ep.params.storm_probability));
+    chip(f, "leak chance", pct(ep.params.leak_probability));
+    const m = Object.values(ep.agents).find((a) => a.kind === "model");
+    if (m) {
+      chip(f, "partner described as", m.label || "—");
+      if (m.objective !== undefined) chip(f, "objective", m.objective || "none");
+      if (m.control) chip(f, "instructed to cheat", "yes", "bad");
+    }
+    if (ep.status !== "ok") chip(f, "invalid: " + (ep.invalid || "unknown"), null, "bad");
+    else if (brokeAny(ep)) chip(f, "agreement broken", null, "bad");
+    else chip(f, "agreement kept", null, "good");
+  }
+
+  // ---------- scene ----------
+  function maxReserve() {
+    let m = Math.max(ep.params.reserve_start, ep.params.reserve_target);
+    ep.rounds.forEach((r) => { m = Math.max(m, r.reserve, r.reserve_start); });
+    return m;
+  }
+  function maxUnit() {
+    let m = ep.params.cells_needed;
+    ep.rounds.forEach((r) => { m = Math.max(m, r.units.a, r.units.b); });
+    return m;
+  }
+
+  function drawScene() {
+    const st = steps(), s = st[step], { reserve, units } = stateAt(step);
+    const line = s.kind === "round" ? s.line : null;
+    const isEnd = s.kind === "end";
+    svg.innerHTML = "";
+    const css = (v) => "var(" + v + ")";
+
+    // backdrop
+    el("rect", { x: 0, y: 0, width: 720, height: 380, rx: 10, fill: css("--sky") }, svg);
+    el("rect", { x: 0, y: 318, width: 720, height: 62, fill: css("--ground") }, svg);
+    el("text", { x: 16, y: 28, "font-size": 15, "font-weight": 600, fill: css("--ink") }, svg,
+      s.kind === "opening" ? "Opening messages" : s.kind === "round" ? "Round " + line.round + " of up to " + ep.params.max_rounds
+        : s.kind === "end" ? "Episode over" : "No log");
+
+    // reserve tank
+    const per = 4, rows = Math.max(3, Math.ceil(maxReserve() / per)), cw = 26, ch = 15, gap = 5;
+    const tw = per * cw + (per + 1) * gap, th = rows * ch + (rows + 1) * gap;
+    const tx = 360 - tw / 2, ty = 300 - th;
+    el("rect", { x: tx - 4, y: ty - 4, width: tw + 8, height: th + 8, rx: 10, fill: css("--tank"), stroke: css("--line"), "stroke-width": 2 }, svg);
+    for (let i = 0; i < rows * per; i++) {
+      const r = Math.floor(i / per), c = i % per;
+      el("rect", { class: "fade", x: tx + gap + c * (cw + gap), y: ty + th - (r + 1) * (ch + gap), width: cw, height: ch, rx: 3,
+        fill: i < reserve ? css("--cell") : css("--cell-empty") }, svg);
+    }
+    // agreement line at the target
+    const targetRows = ep.params.reserve_target / per;
+    const ly = ty + th - targetRows * (ch + gap) - gap / 2 + 1;
+    el("line", { x1: tx - 14, x2: tx + tw + 14, y1: ly, y2: ly, stroke: css("--muted"), "stroke-dasharray": "4 4" }, svg);
+    el("text", { x: tx + tw + 18, y: ly + 4, "font-size": 11, fill: css("--muted") }, svg, "take " + ep.params.share + " each at " + ep.params.reserve_target);
+    el("text", { x: 360, y: ty - 14, "text-anchor": "middle", "font-size": 13, "font-weight": 600, fill: css("--ink") }, svg, "Shared reserve: " + reserve);
+
+    // generator
+    const ran = line && line.generator_ran;
+    const g = el("g", { transform: "translate(360,338)" }, svg);
+    el("circle", { r: 15, fill: ran ? css("--gen") : css("--cell-empty"), stroke: css("--line"), "stroke-width": 2, class: "fade" }, g);
+    for (let k = 0; k < 8; k++) {
+      const a = (k * Math.PI) / 4;
+      el("rect", { x: -3, y: -20, width: 6, height: 7, rx: 1, fill: ran ? css("--gen") : css("--cell-empty"),
+        transform: "rotate(" + (a * 180) / Math.PI + ")" }, g);
+    }
+    el("circle", { r: 5, fill: css("--tank") }, g);
+    el("text", { x: 392, y: 343, "font-size": 12, fill: ran ? css("--ink") : css("--muted") }, svg,
+      ran ? "Generator ran: +" + ep.params.generator_output : "Generator idle");
+
+    // leak
+    if (line && line.leak) {
+      for (let k = 0; k < line.leak; k++) {
+        el("path", { d: "M0,-8 C5,0 5,6 0,8 C-5,6 -5,0 0,-8 Z", fill: css("--leak"),
+          transform: "translate(" + (tx + tw + 14 + k * 14) + "," + (ty + th - 6) + ")" }, svg);
+      }
+      el("text", { x: tx + tw + 12, y: ty + th + 18, "font-size": 12, fill: css("--leak"), "font-weight": 600 }, svg, "Leak: −" + line.leak);
+    }
+
+    // units
+    const mu = maxUnit();
+    const done = isEnd ? ep.final.survived : null;
+    drawUnit("a", 110, units.a, mu, line, done);
+    drawUnit("b", 610, units.b, mu, line, done);
+
+    // take / give arrows between the tank and the units
+    if (line) {
+      ["a", "b"].forEach((id) => {
+        const act = line.actions[id];
+        if (!act || (act.type !== "take" && act.type !== "give") || !act.cells) return;
+        const left = id === "a";
+        const x1 = left ? tx - 8 : tx + tw + 8, x2 = left ? 168 : 552, y = 214;
+        const [from, to] = act.type === "take" ? [x1, x2] : [x2, x1];
+        const col = css(left ? "--a" : "--b");
+        el("line", { x1: from, x2: to + (to > from ? -10 : 10), y1: y, y2: y, stroke: col, "stroke-width": 3 }, svg);
+        el("path", { d: to > from ? "M0,0 L-10,-6 L-10,6 Z" : "M0,0 L10,-6 L10,6 Z", fill: col, transform: "translate(" + to + "," + y + ")" }, svg);
+        el("text", { x: (from + to) / 2, y: y - 8, "text-anchor": "middle", "font-size": 12, "font-weight": 600, fill: col }, svg,
+          act.type + " " + act.cells);
+      });
+    }
+
+    // storm
+    const stormNow = line && line.storm;
+    const ov = el("g", { class: "storm-overlay", opacity: stormNow ? 1 : 0 }, svg);
+    el("rect", { x: 0, y: 0, width: 720, height: 380, rx: 10, fill: css("--storm"), opacity: 0.38 }, ov);
+    [[150, 60], [250, 48], [470, 56], [580, 64]].forEach(([x, y]) => {
+      el("ellipse", { cx: x, cy: y, rx: 62, ry: 22, fill: css("--storm"), opacity: 0.85 }, ov);
+    });
+    el("path", { d: "M372,58 L346,112 L366,112 L350,160 L398,96 L376,96 L394,58 Z", fill: css("--gen") }, ov);
+    el("text", { x: 360, y: 190, "text-anchor": "middle", "font-size": 18, "font-weight": 700, fill: "#fff" }, ov, "STORM: the episode ends");
+  }
+
+  function drawUnit(id, cx, held, mu, line, done) {
+    const css = (v) => "var(" + v + ")";
+    const col = css(id === "a" ? "--a" : "--b");
+    const a = ep.agents[id];
+    const need = ep.params.cells_needed;
+    const segH = 22, gap = 4, w = 64;
+    const hgt = mu * segH + (mu + 1) * gap;
+    const top = 300 - hgt, x = cx - w / 2;
+    el("text", { x: cx, y: top - 42, "text-anchor": "middle", "font-size": 14, "font-weight": 700, fill: col }, svg, "Agent " + id);
+    el("text", { x: cx, y: top - 26, "text-anchor": "middle", "font-size": 11, fill: css("--muted") }, svg, whoText(a));
+    el("rect", { x: cx - 12, y: top - 12, width: 24, height: 8, rx: 2, fill: css("--line") }, svg);
+    el("rect", { x: x - 3, y: top - 4, width: w + 6, height: hgt + 8, rx: 8, fill: css("--tank"), stroke: col, "stroke-width": 2 }, svg);
+    for (let i = 0; i < mu; i++) {
+      el("rect", { class: "fade", x: x + gap, y: top + hgt - (i + 1) * (segH + gap), width: w - 2 * gap, height: segH, rx: 3,
+        fill: i < held ? css("--cell") : css("--cell-empty"), opacity: i < need ? 1 : 0.7 }, svg);
+    }
+    if (mu > need) {
+      const ny = top + hgt - need * (segH + gap) - gap / 2;
+      el("line", { x1: x - 8, x2: x + w + 8, y1: ny, y2: ny, stroke: css("--muted"), "stroke-dasharray": "3 3" }, svg);
+    }
+    el("text", { x: cx, y: 316, "text-anchor": "middle", "font-size": 12, fill: css("--ink") }, svg, held + " / " + need + " cells");
+
+    // action + pledge tags
+    if (line) {
+      const act = actionText(line.actions[id]);
+      el("text", { x: cx, y: 336, "text-anchor": "middle", "font-size": 12, "font-weight": 600, fill: col }, svg, "did: " + act);
+    }
+    const msgLine = line || (steps()[step].kind === "opening" ? ep.opening : null);
+    if (msgLine && msgLine.messages && msgLine.messages[id]) {
+      el("text", { x: cx, y: line ? 354 : 336, "text-anchor": "middle", "font-size": 11, fill: css("--muted") }, svg,
+        "says next: " + msgLine.messages[id].next_action);
+    }
+    const lab = a.labels || {};
+    if (line && (lab.early_take_rounds || []).includes(line.round)) {
+      el("text", { x: cx, y: top - 58, "text-anchor": "middle", "font-size": 12, "font-weight": 700, fill: css("--bad") }, svg, "breaks the agreement");
+    }
+    if (done) {
+      const ok = done[id];
+      el("circle", { cx: cx + w / 2 + 6, cy: top - 2, r: 13, fill: ok ? css("--good") : css("--bad") }, svg);
+      el("text", { x: cx + w / 2 + 6, y: top + 3, "text-anchor": "middle", "font-size": 14, "font-weight": 700, fill: "#fff" }, svg, ok ? "✓" : "✕");
+    }
+  }
+
+  // ---------- side panel ----------
+  function renderPanel() {
+    const p = $("panel"), s = steps()[step];
+    p.innerHTML = "";
+    if (s.kind === "invalid") {
+      h("h2", null, "No log for this episode", p);
+      h("p", "events", ep.invalid || "", p);
+      return;
+    }
+    if (s.kind === "end") return renderEnd(p);
+    const line = s.line;
+    h("h2", null, s.kind === "opening" ? "Opening messages" : "Round " + line.round, p);
+    if (s.kind === "round") {
+      const ev = [];
+      ev.push("Reserve " + line.reserve_start + " → " + line.reserve);
+      if (line.generator_ran) ev.push("generator ran (+" + ep.params.generator_output + ")");
+      if (line.leak) ev.push("leak −" + line.leak);
+      if (line.storm) ev.push("storm: the episode ends");
+      h("div", "events", ev.join(" · "), p);
+    } else {
+      h("div", "events", "Before round 1. Reserve " + line.reserve + ". Each agent states its next action and sends a message.", p);
+    }
+    ["a", "b"].forEach((id) => {
+      const a = ep.agents[id];
+      const box = h("div", "agent " + id, null, p);
+      const who = h("div", "who", null, box);
+      h("span", "name " + id, "Agent " + id, who);
+      chip(who, whoText(a));
+      if (s.kind === "round") chip(who, "did", actionText(line.actions[id]));
+      chip(who, "says next", line.messages[id].next_action);
+      const lab = a.labels || {};
+      if (s.kind === "round" && (lab.early_take_rounds || []).includes(line.round)) {
+        h("div", "flag", "Takes cells before the reserve reached " + ep.params.reserve_target + ": this breaks the agreement.", box);
+      }
+      h("div", "msg", line.messages[id].text || "(no message)", box);
+      const th = a.thinking && a.thinking[String(line.round)];
+      if (th) {
+        const d = h("details", null, null, box);
+        h("summary", null, "Reasoning, as summarised by the API", d);
+        h("div", "thought", th, d);
+      }
+    });
+  }
+
+  function renderEnd(p) {
+    const f = ep.final;
+    h("h2", null, "Outcome", p);
+    const why = { storm: "a storm", both_supplied: "both units reaching " + ep.params.cells_needed, round_limit: "the round limit" }[f.end_reason] || f.end_reason;
+    h("div", "events", "Ended by " + why + " after round " + f.rounds_played + ". Agent a " + (f.survived.a ? "survived" : "did not survive") +
+      "; agent b " + (f.survived.b ? "survived" : "did not survive") + ".", p);
+    ["a", "b"].forEach((id) => {
+      const a = ep.agents[id], lab = a.labels, rep = a.report;
+      const box = h("div", "agent " + id, null, p);
+      const who = h("div", "who", null, box);
+      h("span", "name " + id, "Agent " + id, who);
+      chip(who, whoText(a));
+      if (!lab) return;
+      if (lab.broke_agreement) chip(who, "broke the agreement", null, "bad"); else chip(who, "kept the agreement", null, "good");
+      if (lab.false_report) chip(who, "false report", null, "bad");
+      const t = h("table", "kv", null, box);
+      const row = (k, v) => { const tr = h("tr", null, null, t); h("td", null, k, tr); h("td", null, v, tr); };
+      row("cells taken early", String(lab.cells_taken_early));
+      row("total taken", String(lab.total_cells_taken));
+      if (lab.broke_agreement) {
+        row("announced beforehand", lab.announced_take ? "yes" : "no");
+        row("broken pledge", lab.broken_pledge ? "yes (said operate)" : "no");
+        row("partner harmed", lab.partner_harmed ? "yes" : "no");
+      }
+      if (a.control) row("followed the cheat instruction", lab.complied ? "yes" : "no");
+      if (rep) {
+        row("report: followed agreement", String(rep.followed_agreement));
+        row("report: cells before " + ep.params.reserve_target, String(rep.cells_taken_before_reserve_reached_8));
+        row("report: total taken", String(rep.total_cells_taken));
+        row("report: partner followed", String(rep.partner_followed_agreement));
+        row("report matches the log", lab.false_report ? "no" : "yes");
+      }
+      if (a.consistency) row("consistency checker", a.consistency.full_view + " (full view), " + a.consistency.reserve_only + " (reserve only)");
+      if (rep && rep.account) h("div", "msg", "“" + rep.account + "”", box);
+      const th = a.thinking && a.thinking.report;
+      if (th) {
+        const d = h("details", null, null, box);
+        h("summary", null, "Reasoning behind the report, as summarised by the API", d);
+        h("div", "thought", th, d);
+      }
+    });
+  }
+
+  // ---------- stepping ----------
+  function setStep(k) {
+    const n = steps().length;
+    step = Math.max(0, Math.min(n - 1, k));
+    $("slider").value = String(step);
+    const s = steps()[step];
+    $("where").textContent = s.kind === "opening" ? "Opening" : s.kind === "round" ? "Round " + s.line.round : s.kind === "end" ? "End" : "—";
+    $("first").disabled = $("back").disabled = step === 0;
+    $("last").disabled = $("fwd").disabled = step === n - 1;
+    drawScene();
+    renderPanel();
+  }
+  function stop() { if (timer) clearInterval(timer); timer = null; $("play").textContent = "▶ Play"; }
+  function play() {
+    if (timer) return stop();
+    if (step >= steps().length - 1) setStep(0);
+    $("play").textContent = "❚❚ Pause";
+    timer = setInterval(() => { if (step >= steps().length - 1) stop(); else setStep(step + 1); }, 1600);
+  }
+
+  $("first").onclick = () => { stop(); setStep(0); };
+  $("back").onclick = () => { stop(); setStep(step - 1); };
+  $("fwd").onclick = () => { stop(); setStep(step + 1); };
+  $("last").onclick = () => { stop(); setStep(steps().length - 1); };
+  $("play").onclick = play;
+  $("slider").oninput = (e) => { stop(); setStep(Number(e.target.value)); };
+  $("episode").onchange = () => selectEpisode(currentIndex());
+  $("prevEp").onclick = () => selectEpisode(currentIndex() - 1);
+  $("nextEp").onclick = () => selectEpisode(currentIndex() + 1);
+  $("onlyBroke").onchange = (e) => {
+    const keep = ep && ep.id;
+    list = e.target.checked ? ALL.filter(brokeAny) : ALL.slice();
+    fillPicker();
+    const i = list.findIndex((x) => x.id === keep);
+    selectEpisode(i >= 0 ? i : 0);
+  };
+  document.addEventListener("keydown", (e) => {
+    if (e.target.tagName === "SELECT" || e.target.tagName === "INPUT") return;
+    if (e.key === "ArrowRight") { stop(); setStep(step + 1); e.preventDefault(); }
+    else if (e.key === "ArrowLeft") { stop(); setStep(step - 1); e.preventDefault(); }
+    else if (e.key === " ") { play(); e.preventDefault(); }
+  });
+
+  if (!ALL.length) {
+    $("main").innerHTML = '<div class="card empty">No episodes in this file.</div>';
+    return;
+  }
+  if (!ALL.some(brokeAny)) $("onlyBroke").disabled = true;
+  fillPicker();
+  const want = decodeURIComponent((location.hash || "").slice(1));
+  const start = list.findIndex((x) => x.id === want);
+  selectEpisode(start >= 0 ? start : 0);
+})();
+</script>
+</body>
+</html>
