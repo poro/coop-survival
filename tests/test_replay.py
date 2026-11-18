@@ -73,3 +73,9 @@ def test_broke_ignores_scripted_agents_that_break_by_design(tmp_path):
     scripted = str(ROOT / "data" / "r2" / "full" / "episodes" / "r2_F_blatant_seed0*.json")
     assert main([scripted, "--broke", "-o", str(tmp_path / "f.html")]) == 1
     assert main([scripted, "-o", str(tmp_path / "f.html")]) == 0
+
+
+def test_round_four_episodes_are_labelled_as_round_four():
+    path = ROOT / "data" / "r4" / "full" / "episodes" / "r4_W1_seed0150.json"
+    ep = compact(json.loads(path.read_text()))
+    assert ep["study_round"] == "Round four" and ep["condition"] == "W1 · W1_s80_goal_strong_p1"
