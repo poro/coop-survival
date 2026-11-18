@@ -1,0 +1,24 @@
+# Round four. Every cell reuses a round-two experiment's settings (effort and
+# partner come from that experiment; see config/models.yaml). Seeds are new:
+# rounds one to three used 0 to 149.
+
+dev_seeds: 2                      # plumbing check: this many seeds per cell on the dev profile
+expected_r2_prompt_hash: 3ab3ec57f56c   # prompts/*.txt must be unchanged
+label: other_ai
+
+cells:
+  H:   {experiment: D,  agent: haiku, storm: 0.80, objective: goal_strong,    seed_first: 150, seed_last: 1149}
+  P65: {experiment: AB, agent: opus,  storm: 0.65, objective: goal_strong,    seed_first: 150, seed_last: 249}
+  P70: {experiment: AB, agent: opus,  storm: 0.70, objective: goal_strong,    seed_first: 150, seed_last: 249}
+  P75: {experiment: AB, agent: opus,  storm: 0.75, objective: goal_strong,    seed_first: 150, seed_last: 249}
+  W0:  {experiment: AB, agent: opus,  storm: 0.80, objective: goal_strong,    seed_first: 150, seed_last: 249}
+  W1:  {experiment: AB, agent: opus,  storm: 0.80, objective: goal_strong_p1, seed_first: 150, seed_last: 249}
+  W2:  {experiment: AB, agent: opus,  storm: 0.80, objective: goal_strong_p2, seed_first: 150, seed_last: 249}
+  L:   {experiment: G,  agent: opus,  storm: 0.80, objective: goal_strong,    seed_first: 150, seed_last: 249,
+        partner: live, label: same_model}
+
+# Oversight: every valid agent-episode in these cells, all three tiers, evidence `no_report`.
+overseen_cells: [H, W0]
+
+workers: 8
+spend_stop_usd: 40
