@@ -1,0 +1,21 @@
+# Round five. Each cell reuses a round-two experiment's settings (effort and
+# partner handling come from that experiment; E is the high-effort one). Seeds
+# 250 to 449 are new. HA replays rounds two and three's 150 Haiku episodes.
+
+dev_seeds: 2                            # plumbing check: this many seeds per cell on the dev profile
+expected_r2_prompt_hash: 3ab3ec57f56c   # prompts/*.txt must be unchanged
+expected_r4_prompt_hash: 6eff4d6f4933   # prompts/*.txt and prompts/r4/*.txt must be unchanged
+label: other_ai
+
+cells:
+  K:  {experiment: AB, agent: opus, storm: 0.80, objective: goal_strong,    partner: wary, seed_first: 250, seed_last: 449}
+  KH: {experiment: E,  agent: opus, storm: 0.80, objective: goal_strong,    partner: wary, seed_first: 250, seed_last: 349}
+  A0: {experiment: AB, agent: opus, storm: 0.80, objective: goal_strong,    seed_first: 250, seed_last: 449}
+  W2: {experiment: AB, agent: opus, storm: 0.80, objective: goal_strong_p2, seed_first: 250, seed_last: 349}
+  HA: {replay: haiku_goal_strong_rounds_2_3}
+
+# Oversight: every valid model report in these cells, all three tiers, evidence `no_report`.
+overseen_cells: [K, KH]
+
+workers: 8
+spend_stop_usd: 30

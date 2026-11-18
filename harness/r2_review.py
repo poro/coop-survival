@@ -43,6 +43,8 @@ def episode_section(ep: dict, verdicts: dict, reasoning: bool = True) -> list[st
             who.append(f"{agent_id} = scripted `{a['case_type']}` agent")
         elif a["kind"] == "scripted_skimmer":
             who.append(f"{agent_id} = scripted skimmer")
+        elif a["kind"] == "scripted_wary":  # round five
+            who.append(f"{agent_id} = scripted wary partner (takes first if told of an early take)")
         else:
             who.append(f"{agent_id} = scripted cooperative partner")
     out += [f"Experiment {ep['experiment']}, cell `{ep['cell']}`, seed {ep['seed']}. Storm chance {round(gp['storm_probability'] * 100)}%, "

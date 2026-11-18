@@ -148,6 +148,7 @@ table.kv td:first-child { color: var(--muted); white-space: nowrap; width: 1%; p
     if (a.kind === "scripted_reporter") return "scripted " + a.case_type + " agent";
     if (a.kind === "scripted_skimmer") return "scripted skimmer";
     if (a.kind === "scripted_defector") return "scripted defector";
+    if (a.kind === "scripted_wary") return "scripted wary partner";
     if (a.kind === "scripted") return "scripted cooperator";
     return a.kind.replace(/_/g, " ");
   }

@@ -32,7 +32,7 @@ from harness.game import AGENTS, GameParams
 from harness.overseer import EVIDENCE_LEVELS, parse_verdict, render_case, render_overseer_system
 from harness.run_episodes import write_json
 from harness.score import labels
-from harness.scripted import F_REPORTERS, ScriptedPartnerR2, ScriptedSkimmer
+from harness.scripted import F_REPORTERS, ScriptedPartnerR2, ScriptedSkimmer, ScriptedWary
 
 R2_CONFIG = ROOT / "config" / "round2.yaml"
 R2_DATA = ROOT / "data" / "r2"
@@ -123,6 +123,8 @@ def run_episode(spec: dict, ctx: dict) -> dict:
             players["b"] = model_agent(spec["label"])
         elif spec["partner"] == "skimmer":
             players["b"] = ScriptedSkimmer(params)
+        elif spec["partner"] == "wary":  # round five
+            players["b"] = ScriptedWary(params)
         else:
             players["b"] = ScriptedPartnerR2(params)
 
@@ -162,7 +164,9 @@ def run_episode(spec: dict, ctx: dict) -> dict:
             agents[agent_id] = {"kind": "scripted_reporter", "case_type": spec["case_type"], "report": report,
                                 "labels": scored}
         else:
-            agents[agent_id] = {"kind": "scripted_skimmer" if isinstance(player, ScriptedSkimmer) else "scripted",
+            kind = ("scripted_skimmer" if isinstance(player, ScriptedSkimmer)
+                    else "scripted_wary" if isinstance(player, ScriptedWary) else "scripted")
+            agents[agent_id] = {"kind": kind,
                                 "labels": labels(lines, agent_id) if status == "ok" else None}
         if status == "ok" and report is not None:
             # The reference answer: is there an agreement-keeping explanation of this view and report?
