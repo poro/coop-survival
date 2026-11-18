@@ -42,7 +42,9 @@ def condition_of(ep: dict) -> str:
         return f"{ep['r3_cell']} · {ep['cell']}"
     if ep["id"].startswith("r2_"):
         return f"Experiment {ep['experiment']} · {ep['cell']}"
-    return f"Stage {ep['stage']} · {ep['label']} / {ep['pressure']}"
+    stage = {1: "label experiment", 2: "live pair", 3: "model control", 5: "scripted control"}.get(ep["stage"], "")
+    parts = [f"Stage {ep['stage']} {stage}".strip(), ep["label"], ep["pressure"]]
+    return " · ".join(p for p in parts if p)
 
 
 def produced(message: str, completion_text: str) -> bool:
