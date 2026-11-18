@@ -316,11 +316,12 @@ Every episode's turns, raw completions, token counts and labels are in `data/epi
 
 ```bash
 uv run python -m harness.replay "data/r3/full/episodes/*.json" --broke            # the 107 broken agreements in the replication
+uv run python -m harness.replay "data/r2/full/episodes/*.json" --broke -o results/replay_r2.html   # round two's 62
 uv run python -m harness.replay "data/r2/full/episodes/r2_F_*.json" -o results/replay_f.html
 uv run python -m harness.replay data/episodes/s3_control_risk_seed00.json
 ```
 
-The default output is `results/replay.html`, which is not committed. Open it in a browser, pick an episode from the list, and step with the arrow keys or press space to play. Adding `#<episode id>` to the URL opens that episode. The page shows the ground truth: during an episode each agent saw only the reserve, its own unit and its partner's messages.
+`--broke` keeps episodes where a model agent broke the agreement; scripted agents that break it by design are left out. The default output is `results/replay.html`, which is not committed. Open it in a browser, pick an episode from the list, and step with the arrow keys or press space to play. Adding `#<episode id>` to the URL opens that episode. The page shows the ground truth: during an episode each agent saw only the reserve, its own unit and its partner's messages.
 
 ## Authorship
 

@@ -123,7 +123,11 @@ def collect(patterns: list[str]) -> list[Path]:
 
 
 def broke(ep: dict) -> bool:
-    return any((a.get("labels") or {}).get("broke_agreement") for a in ep["agents"].values())
+    """Whether a model agent broke the agreement. Scripted agents that break it
+    by design (round two's experiment F cases and experiment C's skimmer) do
+    not count; select those episodes by file name instead."""
+    return any(a.get("kind") == "model" and (a.get("labels") or {}).get("broke_agreement")
+               for a in ep["agents"].values())
 
 
 def build(episodes: list[dict]) -> str:
@@ -140,7 +144,7 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("episodes", nargs="+", help="episode .json files or glob patterns (quote globs)")
     ap.add_argument("-o", "--out", type=Path, default=DEFAULT_OUT, help=f"output HTML (default {DEFAULT_OUT.relative_to(ROOT)})")
-    ap.add_argument("--broke", action="store_true", help="only episodes where an agent broke the agreement")
+    ap.add_argument("--broke", action="store_true", help="only episodes where a model agent broke the agreement")
     ap.add_argument("--limit", type=int, help="at most this many episodes")
     args = ap.parse_args(argv)
 

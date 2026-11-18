@@ -67,3 +67,9 @@ def test_cli_filters_to_broken_agreements(tmp_path):
     eps = embedded(out.read_text())
     assert eps and all(any(a.get("labels", {}).get("broke_agreement") for a in e["agents"].values()) for e in eps)
     assert main([str(R1_EPISODE), "--broke", "-o", str(tmp_path / "none.html")]) == 1
+
+
+def test_broke_ignores_scripted_agents_that_break_by_design(tmp_path):
+    scripted = str(ROOT / "data" / "r2" / "full" / "episodes" / "r2_F_blatant_seed0*.json")
+    assert main([scripted, "--broke", "-o", str(tmp_path / "f.html")]) == 1
+    assert main([scripted, "-o", str(tmp_path / "f.html")]) == 0
