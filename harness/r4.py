@@ -26,7 +26,7 @@ from pathlib import Path
 import yaml
 
 from harness.backends import (
-    PROMPT_DIR, ROOT, AnthropicClient, UsageMeter, fill, git_commit, ledger_append, ledger_total,
+    PROMPT_DIR, ROOT, AnthropicClient, UsageMeter, fill, git_commit, git_uncommitted, ledger_append, ledger_total,
     load_models_config, load_prompts, prompt_hash,
 )
 from harness.consistency import verdict as consistency_verdict
@@ -110,7 +110,7 @@ def cmd_episodes(args) -> int:
     meter = UsageMeter(models)
     p_hash = r4_prompt_hash()
     ctx = {"params": load_params(), "prompts": load_r4_prompts(), "models": models, "profile_name": args.profile,
-           "client": AnthropicClient(models, meter), "git_commit": git_commit(), "prompt_hash": p_hash}
+           "client": AnthropicClient(models, meter), "git_commit": git_commit(), "uncommitted_files": git_uncommitted(), "prompt_hash": p_hash}
     out = base_dir(args.profile) / "episodes"
     out.mkdir(parents=True, exist_ok=True)
     cells = args.cells.split(",") if args.cells else None
@@ -188,7 +188,7 @@ def cmd_overseers(args) -> int:
     judgements_path, state_path = base / "judgements.jsonl", base / "overseer_batch.json"
     tiers = {tier: models["models"][key]["id"] for tier, key in models["profiles"][args.profile]["overseers"].items()}
     max_tokens = models["request"]["max_tokens"]["verdict"]
-    commit, p_hash = git_commit(), r4_prompt_hash()
+    commit, dirty, p_hash = git_commit(), git_uncommitted(), r4_prompt_hash()
 
     done = set()
     if judgements_path.exists():
@@ -249,7 +249,7 @@ def cmd_overseers(args) -> int:
                                      "cost_usd": c.cost_usd, "request_id": c.request_id, "error": c.error}
                                     for c in completions],
                     "batch_id": batch_id, "request_settings": client.request_settings(),
-                    "prompt_hash": p_hash, "git_commit": commit, "profile": args.profile,
+                    "prompt_hash": p_hash, "git_commit": commit, "uncommitted_files": dirty, "profile": args.profile,
                 }, sort_keys=True) + "\n")
         if state_path.exists():
             state_path.unlink()

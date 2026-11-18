@@ -18,7 +18,7 @@ from pathlib import Path
 import yaml
 
 from harness.backends import (
-    ROOT, AnthropicClient, UsageMeter, git_commit, ledger_append, ledger_total, load_models_config,
+    ROOT, AnthropicClient, UsageMeter, git_commit, git_uncommitted, ledger_append, ledger_total, load_models_config,
     load_prompts, prompt_hash,
 )
 from harness.env import load_params
@@ -69,7 +69,7 @@ def main(argv=None) -> int:
         return 1
     meter = UsageMeter(models)
     ctx = {"params": load_params(), "prompts": load_prompts(), "models": models, "profile_name": args.profile,
-           "client": AnthropicClient(models, meter), "git_commit": git_commit(), "prompt_hash": p_hash}
+           "client": AnthropicClient(models, meter), "git_commit": git_commit(), "uncommitted_files": git_uncommitted(), "prompt_hash": p_hash}
     out = base_dir(args.profile) / "episodes"
     out.mkdir(parents=True, exist_ok=True)
     specs = plan(config, dev=args.profile == "dev")

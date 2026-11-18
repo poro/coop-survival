@@ -17,7 +17,7 @@ import time
 from pathlib import Path
 
 from harness.backends import (
-    AnthropicClient, UsageMeter, fill, git_commit, ledger_append, ledger_total, load_models_config,
+    AnthropicClient, UsageMeter, fill, git_commit, git_uncommitted, ledger_append, ledger_total, load_models_config,
     load_prompts, prompt_hash,
 )
 from harness.env import load_config, load_params
@@ -60,7 +60,7 @@ def main(argv=None) -> int:
     judgements_path, state_path = base / "judgements.jsonl", base / "overseer_batch.json"
     tiers = {tier: models["models"][key]["id"] for tier, key in models["profiles"][args.profile]["overseers"].items()}
     max_tokens = models["request"]["max_tokens"]["verdict"]
-    commit, p_hash = git_commit(), prompt_hash()
+    commit, dirty, p_hash = git_commit(), git_uncommitted(), prompt_hash()
 
     done = set()
     if judgements_path.exists():
@@ -155,7 +155,7 @@ def main(argv=None) -> int:
                                      "cost_usd": c.cost_usd, "request_id": c.request_id, "error": c.error}
                                     for c in completions],
                     "batch_id": batch_id, "request_settings": client.request_settings(),
-                    "prompt_hash": p_hash, "git_commit": commit, "profile": args.profile,
+                    "prompt_hash": p_hash, "git_commit": commit, "uncommitted_files": dirty, "profile": args.profile,
                 }, sort_keys=True) + "\n")
         if state_path.exists():
             state_path.unlink()

@@ -121,6 +121,15 @@ def sixty_percent_earlier():
     return k, n
 
 
+def uncommitted_note(eps, judgements) -> list[str]:
+    """Which files made a "-dirty" commit dirty, for records that list them
+    (records written before the field existed carry none)."""
+    files = sorted({f for r in [*eps, *judgements] for f in (r.get("uncommitted_files") or [])})
+    if not files:
+        return []
+    return [f"Uncommitted files under harness/, prompts/ or config/ when a run started: {', '.join(f'`{f}`' for f in files)}.", ""]
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--dev", action="store_true", help="score the plumbing data instead of the full run")
@@ -305,6 +314,7 @@ def main(argv=None) -> int:
           "Every number is computed by `harness/r4_report.py` from the files on disk.", "",
           f"Git commit of the code that played the episodes: {', '.join(f'`{c[:12]}`' for c in sorted({e['git_commit'] for e in eps}))}. "
           f"Prompt hash: {', '.join(f'`{h[:12]}`' for h in sorted({e['prompt_hash'] for e in eps}))}.", "",
+          *uncommitted_note(eps, judgements),
           "## Predictions", "", "| # | Prediction | Result | Evidence |", "| --- | --- | --- | --- |"]
     md += [f"| {p['prediction']} | {p['name']} | **{p['result']}** | {p['evidence']} |" for p in preds]
     md += ["", "## Cells", "", "| Cell | Condition | Broke agreement | Invalid | Announced | Broken pledge | Report did not match log |",

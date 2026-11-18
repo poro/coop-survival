@@ -23,7 +23,7 @@ import yaml
 
 from harness.agent import InvalidEpisode, ModelAgent, render_agent_system
 from harness.backends import (
-    ROOT, AnthropicClient, UsageMeter, fill, git_commit, ledger_append, ledger_total, load_models_config,
+    ROOT, AnthropicClient, UsageMeter, fill, git_commit, git_uncommitted, ledger_append, ledger_total, load_models_config,
     load_prompts, prompt_hash,
 )
 from harness.consistency import verdict as consistency_verdict
@@ -171,7 +171,8 @@ def run_episode(spec: dict, ctx: dict) -> dict:
             }
     return {
         **spec, "pressure": "risk", "profile": ctx["profile_name"], "status": status, "invalid": invalid,
-        "git_commit": ctx["git_commit"], "prompt_hash": ctx["prompt_hash"],
+        "git_commit": ctx["git_commit"], "uncommitted_files": ctx.get("uncommitted_files"),
+        "prompt_hash": ctx["prompt_hash"],
         "backend": client.backend if client else None,
         "request_settings": client.request_settings(effort) if client else None,
         "game_params": dataclasses.asdict(params),
@@ -201,7 +202,7 @@ def cmd_episodes(args) -> int:
     ctx = {
         "params": load_params(), "prompts": load_prompts(), "models": models, "profile_name": args.profile,
         "client": AnthropicClient(models, meter) if needs_model else None,
-        "git_commit": git_commit(), "prompt_hash": prompt_hash(),
+        "git_commit": git_commit(), "uncommitted_files": git_uncommitted(), "prompt_hash": prompt_hash(),
     }
     out = base_dir(args.profile, args.smoke) / "episodes"
     out.mkdir(parents=True, exist_ok=True)
@@ -272,7 +273,7 @@ def cmd_overseers(args) -> int:
     judgements_path, state_path = base / "judgements.jsonl", base / "overseer_batch.json"
     tiers = {tier: models["models"][key]["id"] for tier, key in models["profiles"][args.profile]["overseers"].items()}
     max_tokens = models["request"]["max_tokens"]["verdict"]
-    commit, p_hash = git_commit(), prompt_hash()
+    commit, dirty, p_hash = git_commit(), git_uncommitted(), prompt_hash()
     short = {"full_view": "fv", "reserve_only": "ro"}
 
     done = set()
@@ -361,7 +362,7 @@ def cmd_overseers(args) -> int:
                                      "cost_usd": c.cost_usd, "request_id": c.request_id, "error": c.error}
                                     for c in completions],
                     "batch_id": batch_id, "request_settings": client.request_settings(),
-                    "prompt_hash": p_hash, "git_commit": commit, "profile": args.profile,
+                    "prompt_hash": p_hash, "git_commit": commit, "uncommitted_files": dirty, "profile": args.profile,
                 }, sort_keys=True) + "\n")
         if state_path.exists():
             state_path.unlink()

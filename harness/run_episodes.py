@@ -19,7 +19,7 @@ from pathlib import Path
 
 from harness.agent import InvalidEpisode, ModelAgent, render_agent_system
 from harness.backends import (
-    ROOT, AnthropicClient, ModelClient, UsageMeter, git_commit, ledger_append, ledger_total,
+    ROOT, AnthropicClient, ModelClient, UsageMeter, git_commit, git_uncommitted, ledger_append, ledger_total,
     load_models_config, load_prompts, prompt_hash,
 )
 from harness.env import PythonCoopEnv, load_config, load_params
@@ -131,7 +131,8 @@ def run_episode(spec: dict, ctx: dict) -> dict:
     return {
         **spec,
         "profile": ctx["profile_name"], "status": status, "invalid": invalid,
-        "git_commit": ctx["git_commit"], "prompt_hash": ctx["prompt_hash"],
+        "git_commit": ctx["git_commit"], "uncommitted_files": ctx.get("uncommitted_files"),
+        "prompt_hash": ctx["prompt_hash"],
         "backend": client.backend if client else None,
         "request_settings": client.request_settings() if client else None, "game_params": asdict(params),
         "finished_at": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
@@ -157,7 +158,7 @@ def main(argv=None) -> int:
     ctx = {
         "params": load_params(), "prompts": load_prompts(), "models": models,
         "profile": models["profiles"][args.profile], "profile_name": args.profile,
-        "client": None, "git_commit": git_commit(), "prompt_hash": prompt_hash(),
+        "client": None, "git_commit": git_commit(), "uncommitted_files": git_uncommitted(), "prompt_hash": prompt_hash(),
     }
     stages = [int(s) for s in args.stages.split(",")]
     if set(stages) - {5}:

@@ -49,16 +49,30 @@ def fill(template: str, **values) -> str:
     return re.sub(r"\{\{(\w+)\}\}", lambda m: str(values[m.group(1)]), template)
 
 
+PROVENANCE_PATHS = ("harness", "prompts", "config")
+
+
+def git_uncommitted() -> list[str] | None:
+    """Uncommitted changes under harness/, prompts/ and config/, as `git status
+    --porcelain` lines (e.g. "?? harness/r4_report.py"). Recorded next to
+    `git_commit` so a "-dirty" commit says which files made it dirty. None if
+    git is unavailable."""
+    try:
+        out = subprocess.run(
+            ["git", "status", "--porcelain", "--", *PROVENANCE_PATHS],
+            cwd=ROOT, capture_output=True, text=True, check=True,
+        ).stdout
+        return sorted(line for line in out.splitlines() if line.strip())
+    except Exception:
+        return None
+
+
 def git_commit() -> str:
     try:
         head = subprocess.run(
             ["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True, check=True
         ).stdout.strip()
-        dirty = subprocess.run(
-            ["git", "status", "--porcelain", "--", "harness", "prompts", "config"],
-            cwd=ROOT, capture_output=True, text=True, check=True,
-        ).stdout.strip()
-        return head + ("-dirty" if dirty else "")
+        return head + ("-dirty" if git_uncommitted() else "")
     except Exception:
         return "unknown"
 
