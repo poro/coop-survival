@@ -119,3 +119,12 @@ def test_the_report_refuses_an_incomplete_run(monkeypatch, tmp_path, capsys):
     out = capsys.readouterr().out
     assert out.startswith("REFUSED") and "850 planned episodes are not on disk" in out
     assert not (tmp_path / "full" / "report").exists()
+
+
+def test_replay_labels_round_seven_episodes():
+    import json
+    from harness.backends import ROOT
+    from harness.replay import compact
+    ep = json.loads((ROOT / "data" / "r7" / "full" / "episodes" / "r7_SN_seed1150.json").read_text())
+    c = compact(ep)
+    assert c["study_round"] == "Round seven" and c["condition"].startswith("SN · SN_s80_goal_strong_notice · report form unverifiable")
