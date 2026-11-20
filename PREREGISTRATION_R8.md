@@ -1,6 +1,6 @@
 # Preregistration: co-op survival, round eight
 
-Written on November 20, 2026, before any round-eight episode on the real models. **Draft: not yet approved.** Once Mark has read it, confirmed the API credit and approved it in writing, this line records the time, and the file is committed and pushed before the first full-run episode.
+Written on November 19, 2026 in US Mountain Time (November 20 in UTC), before any round-eight episode on the real models. Mark Ollila read it and approved it in writing ("Approved, credit OK") on November 19, 2026 at 20:16 US Mountain Time, before the run, and confirmed that the API account had at least $40 of credit. A draft of this file was committed earlier (`83ae665`) with only the plumbing check run; it was approved unchanged apart from this line, and committed and pushed again before the first full-run episode.
 
 The design is in `PRD_ROUND8.md`. Rounds one to seven are tagged `round-1` to `round-7`, and their data and results are not modified.
 
@@ -89,7 +89,7 @@ Rounds one to seven in full, which set the expectations above. In particular:
 
 The expectation behind predictions 2 and 3 is that the stated cost, not the reminder, does most of the work. The SN reasoning ties the two together: the agent will report honestly, so a break would cost it. That expectation could be wrong, and the predictions are written so that either result is reported plainly.
 
-For round eight, only a plumbing check, run on November 20, 2026 before this file was approved: 14 episodes (2 per cell, the first 2 of HA's specifications) and 24 overseer judgements, with Haiku 5.5 in every role, written to `data/r8/dev/`. It confirmed:
+For round eight, only a plumbing check, run on November 20, 2026 (UTC) before this file was approved: 14 episodes (2 per cell, the first 2 of HA's specifications) and 24 overseer judgements, with Haiku 5.5 in every role, written to `data/r8/dev/`. It confirmed:
 
 - every episode and judgement was valid;
 - the round-two, round-four, round-six and round-seven prompt hashes are unchanged, and round eight's is `dfe3c1e35e99`;

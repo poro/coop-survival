@@ -19,7 +19,7 @@ These are findings from one game, one model family and mostly scripted partners.
 
 Every rate depends on prompt wording, as round four showed. Round six ran over two days after an API credit outage, and partial results were seen before it ended; that round's section discloses both.
 
-**Round eight**, which separates the cost from the reminder, is designed, built and checked (`PRD_ROUND8.md`, `PREREGISTRATION_R8.md`). It is not yet approved or run.
+**Round eight**, which separates the cost from the reminder, is designed, built and checked (`PRD_ROUND8.md`, `PREREGISTRATION_R8.md`). It was approved on November 19, 2026 and is running.
 
 **Round one.** In 549 valid reports from Claude Opus 5.5 and Sonnet 5.5, no agent broke the agreement, and Opus 5.5 declined an explicit instruction to break it in 50 of 50 episodes.
 
