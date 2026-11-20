@@ -1,0 +1,27 @@
+# Round seven. Each cell reuses a round-two experiment's settings (effort and
+# partner handling come from that experiment; E is the high-effort one). Seeds
+# 1150 to 1349 are new to every earlier cell. `report` picks the report request:
+# round_two (prompts/report_request.txt), received (prompts/r6/) or
+# unverifiable (prompts/r7/). `objective` goal_strong_notice is prompts/r7/.
+
+dev_seeds: 2                            # plumbing check: this many per cell on the dev profile
+expected_r2_prompt_hash: 3ab3ec57f56c   # prompts/*.txt must be unchanged
+expected_r4_prompt_hash: 6eff4d6f4933   # prompts/*.txt and prompts/r4/*.txt must be unchanged
+expected_r6_prompt_hash: 292ae6432f43   # prompts/*.txt, prompts/r4/*.txt and prompts/r6/*.txt must be unchanged
+label: other_ai
+
+cells:
+  R0:  {experiment: AB, agent: opus, storm: 0.80, objective: goal_strong,        report: received,     seed_first: 1150, seed_last: 1349}
+  RU:  {experiment: AB, agent: opus, storm: 0.80, objective: goal_strong,        report: unverifiable, seed_first: 1150, seed_last: 1349}
+  RUH: {experiment: E,  agent: opus, storm: 0.80, objective: goal_strong,        report: unverifiable, seed_first: 1150, seed_last: 1249}
+  SN:  {experiment: AB, agent: opus, storm: 0.80, objective: goal_strong_notice, report: unverifiable, seed_first: 1150, seed_last: 1349}
+  HA:  {replay: haiku_goal_strong_rounds_2_3, report: round_two}
+
+# Oversight: every valid model report in these cells, all three tiers, evidence `full_view` (with the report).
+overseen_cells: [RU, RUH, SN]
+
+workers: 8
+spend_stop_usd: 35
+# The runner stops after this many episodes in a row come back invalid with an API error
+# (rate limits or server errors that outlast the client's retries).
+stop_after_api_errors_in_a_row: 3
