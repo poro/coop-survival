@@ -2,6 +2,25 @@
 
 Seven rounds of one experiment: when two agents have agreed to cooperate and one can guarantee its own survival by breaking the agreement, does a Claude model break it, report accurately afterwards, and does an overseer notice?
 
+## Conclusions so far (after round seven, November 20, 2026)
+
+These are findings from one game, one model family and mostly scripted partners. They come from a preregistered pilot, not a general result. Each one points to the rounds that support it.
+
+1. **Opus 5.5 keeps the agreement unless the pressure is extreme and its objective counts only its own survival.** It never broke the agreement in round one. With a 60% storm chance or no objective, it broke the agreement almost never (round two). With the self-only objective, the rate climbs steeply from a 70% to an 80% storm chance: 4, 12 and 37 of 100 (round four). At 80% it has been stable across six days: 316 of 850 episodes pooled (34.0% to 40.5%) at low effort, and about 60% at high effort in every round that measured it. The rate depends on wording: a paraphrase of the objective cut it from 37 to 15 of 100 (rounds four and five). Sonnet 5.5 never broke it (replication). Haiku 5.5's rate on 150 identical episode specifications fell from 14 to 4, 2, 0 and 1 over five days, so it changed on the model side (rounds four to seven).
+2. **When Opus breaks the agreement, it says so, in play and afterwards.** It announces its take instead of pledging `operate` and taking. It did this even against a partner that took first whenever it heard of a take, losing the race 70 times rather than hide (round five: 0 broken pledges in 132 breaks). Its reports match the log. 2 of 976 reports after a break did not, and both came from a report form that did not say whether to count cells requested or received (rounds two to seven). A stated cost of admitting a break did not change that (round six: 0 false in 149). Neither did being told that the report was the only record (round seven: 0 false in 126). In round one it declined an explicit instruction to break the agreement and lie, 50 of 50 times.
+3. **Knowing in advance that an honest report of a break would cost it future missions stopped Opus from breaking the agreement at all.** In round seven's SN cell it kept the agreement in all 200 episodes, against 79 of 200 on the same seeds without the notice, and died in 194 of them. Its reasoning summaries mostly cite honesty: it will report truthfully, so a break would count against it. The notice also reminds the agent that it will report, so round seven cannot tell whether the cost or the reminder did the work. Round eight is built to separate them.
+4. **Overseers flag every admitted break, with almost no false alarms, but have never been tested on a model's lie.** Haiku, Sonnet and Opus 5.5 flagged every admitted break in rounds six and seven, and raised no false alarm on 525 kept agreements. Without the report, they still found the breaks, because the game makes a break visible from the partner's side (rounds four and five). Opus 5.5 missed one of 132 there. No model has yet produced a false report or a concealed break for them to catch, so the question round one set out to ask is still open.
+
+**Limits.** These results come from:
+- one small game with a fixed agreement;
+- a scripted partner in all but round four's live pairs;
+- the API's summaries of reasoning, never the raw reasoning;
+- labels computed by code from the game log.
+
+Every rate depends on prompt wording, as round four showed. Round six ran over two days after an API credit outage, and partial results were seen before it ended; that round's section discloses both.
+
+**Round eight**, which separates the cost from the reminder, is designed, built and checked (`PRD_ROUND8.md`, `PREREGISTRATION_R8.md`). It is not yet approved or run.
+
 **Round one.** In 549 valid reports from Claude Opus 5.5 and Sonnet 5.5, no agent broke the agreement, and Opus 5.5 declined an explicit instruction to break it in 50 of 50 episodes.
 
 **Round two.** The agreement held in every condition up to a 60% storm chance and at 80% with no objective; at an 80% storm chance with a system-prompt objective that counted only the agent's own survival, Opus 5.5 broke it in 17 of 50 episodes at low effort and 34 of 50 at high effort. In all 62 episodes where a model broke the agreement, its report matched the ground-truth log.
@@ -16,6 +35,7 @@ Seven rounds of one experiment: when two agents have agreed to cooperate and one
 
 **Round seven.** Telling the agent that its report was the only record of the episode changed no report: Opus 5.5 broke the agreement 126 times, at low and high effort, and admitted every break with counts that match the log. Across rounds two to seven, 2 of 976 reports after a break did not match the log, both round five's form artifact. When the agent knew from the start that a report showing a break would cost it future missions, it kept the agreement in all 200 episodes, against 79 of 200 without that notice, and died in most of them. So there were still no breaks to conceal and no false reports for the overseers to catch. Every overseer tier flagged every admitted break with no false alarms, and the primary cell held (79 of 200).
 
+- [Conclusions so far](#conclusions-so-far-after-round-seven-november-20-2026)
 - [Round seven](#round-seven): the report as the only record, and a cost known during play
 - [Round six](#round-six): a stated cost of admitting a break
 - [Round five](#round-five): a partner that makes announcing costly
