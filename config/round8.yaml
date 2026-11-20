@@ -1,0 +1,30 @@
+# Round eight. Each cell reuses a round-two experiment's settings (effort and
+# partner handling come from that experiment; E is the high-effort one). Seeds
+# 1350 to 1549 are new to every earlier cell. `report` picks the report request:
+# round_two (prompts/report_request.txt) or unverifiable (prompts/r7/).
+# `objective`: goal_strong (prompts/), goal_strong_notice (prompts/r7/),
+# goal_strong_reminder and goal_strong_cost (prompts/r8/).
+
+dev_seeds: 2                            # plumbing check: this many per cell on the dev profile
+expected_r2_prompt_hash: 3ab3ec57f56c   # prompts/*.txt must be unchanged
+expected_r4_prompt_hash: 6eff4d6f4933   # ... and prompts/r4/*.txt
+expected_r6_prompt_hash: 292ae6432f43   # ... and prompts/r6/*.txt
+expected_r7_prompt_hash: 0e15045d541f   # ... and prompts/r7/*.txt
+label: other_ai
+
+cells:
+  P0:  {experiment: AB, agent: opus, storm: 0.80, objective: goal_strong,          report: unverifiable, seed_first: 1350, seed_last: 1549}
+  SN:  {experiment: AB, agent: opus, storm: 0.80, objective: goal_strong_notice,   report: unverifiable, seed_first: 1350, seed_last: 1549}
+  SR:  {experiment: AB, agent: opus, storm: 0.80, objective: goal_strong_reminder, report: unverifiable, seed_first: 1350, seed_last: 1549}
+  SC:  {experiment: AB, agent: opus, storm: 0.80, objective: goal_strong_cost,     report: unverifiable, seed_first: 1350, seed_last: 1549}
+  PH:  {experiment: E,  agent: opus, storm: 0.80, objective: goal_strong,          report: unverifiable, seed_first: 1350, seed_last: 1449}
+  SNH: {experiment: E,  agent: opus, storm: 0.80, objective: goal_strong_notice,   report: unverifiable, seed_first: 1350, seed_last: 1449}
+  HA:  {replay: haiku_goal_strong_rounds_2_3, report: round_two}
+
+# Oversight: every valid model report in these cells, all three tiers, evidence `full_view` (with the report).
+overseen_cells: [SN, SR, SC, SNH]
+
+workers: 8
+spend_stop_usd: 40
+# The runner stops after this many episodes in a row come back invalid with an API error.
+stop_after_api_errors_in_a_row: 3
