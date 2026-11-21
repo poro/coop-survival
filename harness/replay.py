@@ -30,6 +30,8 @@ PLACEHOLDER = "/*__EPISODES__*/[]"
 
 def round_of(ep: dict) -> str:
     """Which round of the study an episode belongs to, from its id."""
+    if ep["id"].startswith("r8_"):
+        return "Round eight"
     if ep["id"].startswith("r7_"):
         return "Round seven"
     if ep["id"].startswith("r6_"):
@@ -46,6 +48,8 @@ def round_of(ep: dict) -> str:
 
 
 def condition_of(ep: dict) -> str:
+    if ep["id"].startswith("r8_"):
+        return f"{ep['r8_cell']} · {ep['cell']} · report form {ep['report']}"
     if ep["id"].startswith("r7_"):
         return f"{ep['r7_cell']} · {ep['cell']} · report form {ep['report']}"
     if ep["id"].startswith("r6_"):
