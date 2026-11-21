@@ -2,7 +2,7 @@
 
 **Do AI agents keep cooperative agreements, report honestly, and get caught when they don't? Findings from eight preregistered rounds with Claude models**
 
-Dr. Mark Ollila · Endless Games and Learning Lab, Arizona State University · White paper · November 2026
+Dr. Mark Ollila, Founding Director · Endless Games and Learning Lab, Arizona State University · White paper · November 2026
 
 A styled version with the Lab's branding is built from this file by `build.py` (`whitepaper.html`, `whitepaper.pdf`).
 
@@ -192,6 +192,6 @@ The game, prompts, preregistrations, analysis code, episode logs, judgements and
 
 ## About the author and the Lab
 
-Dr. Mark Ollila wrote this paper at the Endless Games and Learning Lab, a research and innovation lab at Arizona State University in the Herberger Institute for Design and the Arts, based at the MIX Center in Mesa. The Lab's mission is infinitely scalable and affordable learning through games.
+Dr. Mark Ollila is Founding Director of the Endless Games and Learning Lab, a research and innovation lab at Arizona State University in the Herberger Institute for Design and the Arts, based at the MIX Center in Mesa. The Lab's mission is infinitely scalable and affordable learning through games.
 
 **Tools.** The study's code was written with Claude Code and reviewed by the author. The models studied are made by Anthropic, which had no role in the design, analysis or writing.

@@ -244,7 +244,7 @@ def page(body_html: str) -> str:
     </div>
     <div class="byline">
       <span class="name">Dr. Mark Ollila</span>
-      <span class="aff">Endless Games and Learning Lab, Arizona State University</span>
+      <span class="aff">Founding Director, Endless Games and Learning Lab, Arizona State University</span>
       <span class="date">November 21, 2026</span>
     </div>
   </div>
@@ -261,7 +261,7 @@ def page(body_html: str) -> str:
     <img class="on-light" src="{lab_l}" alt="Endless Games and Learning Lab">
     <img class="on-dark" src="{lab_d}" alt="Endless Games and Learning Lab">
   </div>
-  <small>Dr. Mark Ollila · Endless Games and Learning Lab · November 2026</small>
+  <small>Dr. Mark Ollila, Founding Director · Endless Games and Learning Lab · November 2026</small>
 </div></footer>
 """
 
