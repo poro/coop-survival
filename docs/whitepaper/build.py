@@ -132,6 +132,8 @@ h3 { font-size: 1.1rem; font-weight: 700; margin: 1.8em 0 .5em; }
 ul, ol { padding-left: 1.3em; margin: 0 0 1em; }
 li { margin: .25em 0; }
 
+.refs p { padding-left: 2em; text-indent: -2em; font-size: .9rem; margin: 0 0 .55em; overflow-wrap: anywhere; }
+.refs a { color: var(--accent); }
 .contents { border-top: 4px solid var(--asu-maroon); background: var(--surface-raised); padding: 16px 20px; margin-bottom: 1em; }
 .contents ol { list-style: none; padding: 0; margin: 10px 0 0; columns: 2 220px; column-gap: 32px; }
 .contents li { margin: 0 0 6px; break-inside: avoid; }
@@ -219,6 +221,8 @@ def build_body(md_text: str) -> tuple[str, str]:
     html = html.replace("</table>", "</table></div>")
     # Wrap the abstract in a raised panel.
     html = re.sub(r'(<h2 id="abstract">Abstract</h2>)(.*?)(?=<h2)', r'\1<div class="abstract">\2</div>', html, count=1, flags=re.S)
+    # References get a hanging indent; they run to the end of the document.
+    html = re.sub(r'(<h2 id="references">References</h2>)(.*)$', r'\1<div class="refs">\2</div>', html, count=1, flags=re.S)
     toc = contents(html)
     html = html.replace('<h2 id="abstract">', toc + '<h2 id="abstract">', 1)
     return head_md, html
