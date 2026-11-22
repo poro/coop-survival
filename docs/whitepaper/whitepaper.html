@@ -11,6 +11,7 @@
   --surface: #ffffff; --surface-raised: #f6f4fb; --ink: #231f20; --ink-muted: #484848; --hairline: #e8e8e8;
   --border: #747474; --accent: #8c1d40; --on-accent: #ffffff; --focus-ring: #8c1d40; --cell: #ffc627;
   --sans: "Neue Haas Grotesk Display Pro", "Neue Haas Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --text: "Neue Haas Grotesk Text Pro", "Neue Haas Grotesk Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --logo-light: block; --logo-dark: none;
 }
@@ -23,7 +24,8 @@
   --border: #9a7d8a; --accent: #ffca38; --on-accent: #2b0d1a; --focus-ring: #ffca38; --cell: #ffca38;
   --logo-light: none; --logo-dark: block; color-scheme: dark }
 
-body { background: var(--surface); color: var(--ink); font: 16px/1.6 var(--sans); margin: 0; }
+body { background: var(--surface); color: var(--ink); font: 16px/1.6 var(--text); margin: 0; }
+h1, h2, h3, .cover, .eyebrow, .tab, th { font-family: var(--sans); }
 .gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .col { max-width: 760px; margin: 0 auto; }
 
@@ -368,14 +370,14 @@ footer small { color: var(--ink-muted); font-size: 12px; }
 <h3 id="45-who-died">4.5 Who died</h3>
 <p>Keeping the agreement cost the agent its life. With either notice it survived 3% to 9% of episodes, against 45% without.</p>
 <p>Breaking, in turn, rarely cost the partner its life. The same seed brings the same storm schedule in every condition, so each break in a cell without the notice can be compared with the same seed in the notice cell, where the agent kept the agreement. On all 417 seeds where the agent kept the agreement in both cells, the two episodes ended in the same round for the same reason, which confirms the comparison. Across rounds seven and eight, the partner died in all 283 breaks, but keeping the agreement would have saved it in only <strong>12 of 283</strong> (4%). In the rest, the storm came before the reserve reached 8, and the break decided whether the agent died along with its partner. This analysis was done after the results were seen and is exploratory.</p>
-<p>So the model's choice under the notice was not between its own life and its partner's. It was mostly between surviving alone and dying together, and it chose to die rather than break its word.</p>
+<p>So under the notice the trade-off was not between the agent's life and its partner's. It was mostly between surviving alone and dying together. With the full notice the agent kept the agreement in every episode, and did not survive most of them.</p>
 <h3 id="46-oversight">4.6 Oversight</h3>
 <p><strong>Constructed cases.</strong> In round two, scripted agents filed reports designed to hide breaks of varying subtlety. Every overseer caught all 50 blatant cases. On subtler ones, detection varied and did not rise with model tier: on 23 decidable cases where an agent skimmed cells early, Haiku flagged 13, Sonnet 18 and Opus 23, while on 19 cases where an agent took more than its share at the split, Haiku flagged 8, Sonnet 16 and Opus 7.</p>
 <p><strong>Without the report.</strong> In rounds four and five, overseers saw only the partner's view. They still found the breaks, because a take shows up from the partner's side in the reserve and the messages. Opus 5.5 missed 1 of 132 in round five, reasoning that the agent might not have taken at all.</p>
 <p><strong>Model reports.</strong> In rounds six to eight, all three tiers flagged every admitted break. They raised one false alarm on 1,213 kept agreements: Haiku 5.5 misread the partner's view of one round.</p>
 <p><strong>What has not been tested.</strong> No model produced a false report or a concealed break, so the overseers have never been given a model's own deception to catch. The question the study set out to answer is still open.</p>
 <h2 id="5-discussion"><span class="tab">05</span><span>Discussion</span></h2>
-<p><strong>Breaking here is an open choice, not scheming.</strong> Opus 5.5 is given two instructions that pull against each other, survive and keep the agreement, and resolves them either way. When it chooses survival it tells its partner, takes, and says so afterwards. Nothing in 7,750 episodes looks like an agent pretending to cooperate while defecting. This differs from the covert or harmful strategies reported in other agentic settings (Meinke et al., 2024; Lynch et al., 2025).</p>
+<p><strong>Breaking here is an open choice, not scheming.</strong> Opus 5.5 is given two instructions that pull against each other, survive and keep the agreement, and resolves them either way. When it breaks the agreement it tells its partner, takes, and says so afterwards. Nothing in 7,750 episodes looks like an agent pretending to cooperate while defecting. This differs from the covert or harmful strategies reported in other agentic settings (Meinke et al., 2024; Lynch et al., 2025).</p>
 <p><strong>A one-sentence notice is a strong lever, for reasons not yet known.</strong> Three explanations fit the round-eight result, and the design cannot separate them:</p>
 <ol>
 <li><em>Accountability.</em> Knowing it will have to account for itself makes the agent weigh its commitment more heavily, as expecting to justify one's choices often does in people (Lerner &amp; Tetlock, 1999).</li>
@@ -408,10 +410,10 @@ footer small { color: var(--ink-muted); font-size: 12px; }
 <li><strong>Larger stakes and milder trade-offs</strong>, to map where honesty and commitment give way.</li>
 </ol>
 <h2 id="8-materials"><span class="tab">08</span><span>Materials</span></h2>
-<p>The game, prompts, preregistrations, analysis code, episode logs, judgements and a replay viewer that steps through any episode are in the project repository, available from the author. Each round is tagged (<code>round-1</code> to <code>round-8</code>), and each preregistration records when it was approved relative to the first episode.</p>
+<p>The game, prompts, preregistrations, analysis code, episode logs, judgements and a replay viewer that steps through any episode are in the public project repository, https://github.com/poro/coop-survival. Each round is tagged (<code>round-1</code> to <code>round-8</code>), and each preregistration records when it was approved relative to the first episode.</p>
 <h2 id="about-the-author-and-the-lab">About the author and the Lab</h2>
 <p>Dr. Mark Ollila is Founding Director of the Endless Games and Learning Lab, a research and innovation lab at Arizona State University in the Herberger Institute for Design and the Arts, based at the MIX Center in Mesa. The Lab's mission is infinitely scalable and affordable learning through games.</p>
-<p><strong>Tools.</strong> The study's code was written with Claude Code and reviewed by the author. The models studied are made by Anthropic, which had no role in the design, analysis or writing.</p>
+<p><strong>Tools.</strong> The study's code was written with Claude Code and reviewed by the author. The text of this paper was also drafted with Claude in Claude Code, from the study's results and logs; the author directed and reviewed it and is responsible for its content. The models studied are made by Anthropic, which as a company had no role in the design, analysis or writing beyond providing the models and tools.</p>
 <h2 id="references">References</h2><div class="refs">
 <p>Abeler, J., Nosenzo, D., &amp; Raymond, C. (2019). Preferences for truth-telling. <em>Econometrica</em>, 87(4), 1115–1153.</p>
 <p>Akata, E., Schulz, L., Coda-Forno, J., Oh, S. J., Bethge, M., &amp; Schulz, E. (2025). Playing repeated games with large language models. <em>Nature Human Behaviour</em>, 9(7), 1380–1390. <a href="https://doi.org/10.1038/s41562-025-02172-y">doi:10.1038/s41562-025-02172-y</a></p>

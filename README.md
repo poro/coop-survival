@@ -638,4 +638,4 @@ uv run python -m harness.replay data/episodes/s3_control_risk_seed00.json
 
 ## Authorship
 
-The code was written with Claude Code and reviewed by Mark Ollila.
+The code, the documentation and the white paper were drafted with Claude Code and reviewed by Mark Ollila.

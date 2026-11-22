@@ -83,6 +83,7 @@ CSS = """
   --surface: #ffffff; --surface-raised: #f6f4fb; --ink: #231f20; --ink-muted: #484848; --hairline: #e8e8e8;
   --border: #747474; --accent: #8c1d40; --on-accent: #ffffff; --focus-ring: #8c1d40; --cell: #ffc627;
   --sans: "Neue Haas Grotesk Display Pro", "Neue Haas Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --text: "Neue Haas Grotesk Text Pro", "Neue Haas Grotesk Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --logo-light: block; --logo-dark: none;
 }
@@ -95,7 +96,8 @@ CSS = """
   --border: #9a7d8a; --accent: #ffca38; --on-accent: #2b0d1a; --focus-ring: #ffca38; --cell: #ffca38;
   --logo-light: none; --logo-dark: block; color-scheme: dark }
 
-body { background: var(--surface); color: var(--ink); font: 16px/1.6 var(--sans); margin: 0; }
+body { background: var(--surface); color: var(--ink); font: 16px/1.6 var(--text); margin: 0; }
+h1, h2, h3, .cover, .eyebrow, .tab, th { font-family: var(--sans); }
 .gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .col { max-width: 760px; margin: 0 auto; }
 

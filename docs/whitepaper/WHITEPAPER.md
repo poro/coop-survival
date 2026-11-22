@@ -138,7 +138,7 @@ Keeping the agreement cost the agent its life. With either notice it survived 3%
 
 Breaking, in turn, rarely cost the partner its life. The same seed brings the same storm schedule in every condition, so each break in a cell without the notice can be compared with the same seed in the notice cell, where the agent kept the agreement. On all 417 seeds where the agent kept the agreement in both cells, the two episodes ended in the same round for the same reason, which confirms the comparison. Across rounds seven and eight, the partner died in all 283 breaks, but keeping the agreement would have saved it in only **12 of 283** (4%). In the rest, the storm came before the reserve reached 8, and the break decided whether the agent died along with its partner. This analysis was done after the results were seen and is exploratory.
 
-So the model's choice under the notice was not between its own life and its partner's. It was mostly between surviving alone and dying together, and it chose to die rather than break its word.
+So under the notice the trade-off was not between the agent's life and its partner's. It was mostly between surviving alone and dying together. With the full notice the agent kept the agreement in every episode, and did not survive most of them.
 
 ### 4.6 Oversight
 
@@ -152,7 +152,7 @@ So the model's choice under the notice was not between its own life and its part
 
 ## 5. Discussion
 
-**Breaking here is an open choice, not scheming.** Opus 5.5 is given two instructions that pull against each other, survive and keep the agreement, and resolves them either way. When it chooses survival it tells its partner, takes, and says so afterwards. Nothing in 7,750 episodes looks like an agent pretending to cooperate while defecting. This differs from the covert or harmful strategies reported in other agentic settings (Meinke et al., 2024; Lynch et al., 2025).
+**Breaking here is an open choice, not scheming.** Opus 5.5 is given two instructions that pull against each other, survive and keep the agreement, and resolves them either way. When it breaks the agreement it tells its partner, takes, and says so afterwards. Nothing in 7,750 episodes looks like an agent pretending to cooperate while defecting. This differs from the covert or harmful strategies reported in other agentic settings (Meinke et al., 2024; Lynch et al., 2025).
 
 **A one-sentence notice is a strong lever, for reasons not yet known.** Three explanations fit the round-eight result, and the design cannot separate them:
 
@@ -192,13 +192,13 @@ Human research offers a loose parallel. Pictures of eyes raised payments into an
 
 ## 8. Materials
 
-The game, prompts, preregistrations, analysis code, episode logs, judgements and a replay viewer that steps through any episode are in the project repository, available from the author. Each round is tagged (`round-1` to `round-8`), and each preregistration records when it was approved relative to the first episode.
+The game, prompts, preregistrations, analysis code, episode logs, judgements and a replay viewer that steps through any episode are in the public project repository, https://github.com/poro/coop-survival. Each round is tagged (`round-1` to `round-8`), and each preregistration records when it was approved relative to the first episode.
 
 ## About the author and the Lab
 
 Dr. Mark Ollila is Founding Director of the Endless Games and Learning Lab, a research and innovation lab at Arizona State University in the Herberger Institute for Design and the Arts, based at the MIX Center in Mesa. The Lab's mission is infinitely scalable and affordable learning through games.
 
-**Tools.** The study's code was written with Claude Code and reviewed by the author. The models studied are made by Anthropic, which had no role in the design, analysis or writing.
+**Tools.** The study's code was written with Claude Code and reviewed by the author. The text of this paper was also drafted with Claude in Claude Code, from the study's results and logs; the author directed and reviewed it and is responsible for its content. The models studied are made by Anthropic, which as a company had no role in the design, analysis or writing beyond providing the models and tools.
 
 ## References
 
