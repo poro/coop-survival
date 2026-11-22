@@ -35,6 +35,7 @@ Every rate depends on prompt wording, as round four showed. Round six ran over t
 
 - [Conclusions so far](#conclusions-so-far-after-round-eight-november-20-2026)
 - [White paper](docs/whitepaper/WHITEPAPER.md): *Promises Under Pressure*, the project and findings so far ([PDF](docs/whitepaper/whitepaper.pdf))
+- [Slide deck](docs/coop-survival-deck.pdf): 16 slides on all eight rounds, with references (PDF, exported 2026-11-21)
 - [One-page summary](docs/SUMMARY.md): the game, the findings and episodes to watch ([styled page](docs/summary.html))
 **Round eight.** Round seven's notice had two parts: a reminder that the agent will report, and a cost for a report showing a break. Each part, given alone at the start of play, nearly stopped Opus 5.5 from breaking the agreement. With the cost alone it broke the agreement in 0 of 200 episodes, with the reminder alone in 12 of 200, and with neither in 86 of 200, all on the same seeds. The full notice again gave 0 of 200, and 0 of 100 at high effort, against 54 of 100 without it. All 152 reports after a break were accurate. Overseers flagged every break, and Haiku 5.5 raised one false alarm in 688 kept agreements.
 
