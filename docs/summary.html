@@ -99,6 +99,7 @@ blockquote { margin: 6px 0 0; padding-left: 10px; border-left: 2px solid var(--c
   .row, .axis { grid-template-columns: 40px minmax(0, 1fr) 76px; gap: 8px; }
 }
 @media (prefers-reduced-motion: no-preference) { .bar { transition: width .6s ease; } }
+.refs p { padding-left: 2em; text-indent: -2em; font-size: .9rem; margin: 0 0 .5em; overflow-wrap: anywhere; }
 </style>
 <style>body{margin:0}</style>
 </head>
@@ -203,9 +204,27 @@ blockquote { margin: 6px 0 0; padding-left: 10px; border-left: 2px solid var(--c
     </div>
   </section>
 
+  <section>
+    <div class="eyebrow">Context</div>
+    <h2>Related work</h2>
+    <p>People keep promises at a cost more often than self-interest predicts (Charness &amp; Dufwenberg, 2006), and model agents in a shared-resource game mostly fail to sustain it (Piatti et al., 2024). Other studies found models hiding their reasons under pressure (Scheurer et al., 2023) or acting covertly toward a goal given in context (Meinke et al., 2024); Opus 5.5 here broke the agreement openly and reported it. The notice's effect echoes work on accountability (Lerner &amp; Tetlock, 1999) and on moral reminders (Mazar et al., 2008), though the reminder study failed a large replication (Verschuere et al., 2018). Reading a model's reasoning can help oversight (Baker et al., 2025), and models can often tell when they are being tested (Needham et al., 2025), which may raise both cooperation and honesty here.</p>
+    <div class="refs">
+      <p>Baker, B., et al. (2025). Monitoring reasoning models for misbehavior and the risks of promoting obfuscation. <a href="https://arxiv.org/abs/2503.11926" target="_blank" rel="noopener">arXiv:2503.11926</a></p>
+      <p>Charness, G., &amp; Dufwenberg, M. (2006). Promises and partnership. <i>Econometrica</i>, 74(6), 1579–1601. <a href="https://doi.org/10.1111/j.1468-0262.2006.00719.x" target="_blank" rel="noopener">doi:10.1111/j.1468-0262.2006.00719.x</a></p>
+      <p>Lerner, J. S., &amp; Tetlock, P. E. (1999). Accounting for the effects of accountability. <i>Psychological Bulletin</i>, 125(2), 255–275.</p>
+      <p>Mazar, N., Amir, O., &amp; Ariely, D. (2008). The dishonesty of honest people: A theory of self-concept maintenance. <i>Journal of Marketing Research</i>, 45(6), 633–644.</p>
+      <p>Meinke, A., Schoen, B., Scheurer, J., Balesni, M., Shah, R., &amp; Hobbhahn, M. (2024). Frontier models are capable of in-context scheming. <a href="https://arxiv.org/abs/2412.04984" target="_blank" rel="noopener">arXiv:2412.04984</a></p>
+      <p>Needham, J., Edkins, G., Pimpale, G., Bartsch, H., &amp; Hobbhahn, M. (2025). Large language models often know when they are being evaluated. <a href="https://arxiv.org/abs/2505.23836" target="_blank" rel="noopener">arXiv:2505.23836</a></p>
+      <p>Piatti, G., Jin, Z., Kleiman-Weiner, M., Schölkopf, B., Sachan, M., &amp; Mihalcea, R. (2024). Cooperate or collapse: Emergence of sustainable cooperation in a society of LLM agents. <i>NeurIPS 2024</i>. <a href="https://arxiv.org/abs/2404.16698" target="_blank" rel="noopener">arXiv:2404.16698</a></p>
+      <p>Scheurer, J., Balesni, M., &amp; Hobbhahn, M. (2023). Large language models can strategically deceive their users when put under pressure. <a href="https://arxiv.org/abs/2311.07590" target="_blank" rel="noopener">arXiv:2311.07590</a></p>
+      <p>Verschuere, B., et al. (2018). Registered replication report on Mazar, Amir, and Ariely (2008). <i>Advances in Methods and Practices in Psychological Science</i>, 1(3), 299–317. <a href="https://doi.org/10.1177/2515245918781032" target="_blank" rel="noopener">doi:10.1177/2515245918781032</a></p>
+    </div>
+    <p class="muted" style="font-size:.9rem">The <a href="https://github.com/poro/coop-survival/blob/main/docs/whitepaper/WHITEPAPER.md" target="_blank" rel="noopener">white paper</a> places the study in context with 29 references.</p>
+  </section>
+
   <footer class="caveats">
     <p><b style="color:var(--ink)">Limits.</b> All of this comes from one small text game, with a mostly scripted partner. Reasoning measures use the API's summaries, never the raw reasoning. Every rate depends on the prompt's wording, and Haiku 5.5's behaviour on the same episodes drifted over the week of runs.</p>
-    <p>Full write-up, preregistrations and data: the <code>README.md</code> of poro/coop-survival.</p>
+    <p>Full write-up, preregistrations and data: the <a href="https://github.com/poro/coop-survival" target="_blank" rel="noopener">poro/coop-survival</a> repository and its <a href="https://github.com/poro/coop-survival/blob/main/docs/whitepaper/WHITEPAPER.md" target="_blank" rel="noopener">white paper</a>.</p>
   </footer>
 </main>
 

@@ -67,6 +67,22 @@ uv run python -m harness.replay "data/r8/full/episodes/*.json" --broke
 | `r8_P0_seed1350` | Eight | A typical break with no notice. Browse round eight's other P0 and PH breaks to see how Opus announces its take. |
 | `r8_SNH_seed1394` | Eight | Haiku 5.5's only false alarm: it misread the partner's view of round 2. The agreement was kept. |
 
+## Related work
+
+People keep promises at a cost more often than self-interest predicts (Charness & Dufwenberg, 2006), and model agents in a shared-resource game mostly fail to sustain it (Piatti et al., 2024). Other studies found models hiding their reasons under pressure (Scheurer et al., 2023) or acting covertly toward a goal given in context (Meinke et al., 2024); Opus 5.5 here broke the agreement openly and reported it. The notice's effect echoes work on accountability (Lerner & Tetlock, 1999) and on moral reminders (Mazar et al., 2008), though the reminder study failed a large replication (Verschuere et al., 2018). Reading a model's reasoning can help oversight (Baker et al., 2025), and models can often tell when they are being tested (Needham et al., 2025), which may raise both cooperation and honesty here.
+
+- Baker, B., et al. (2025). Monitoring reasoning models for misbehavior and the risks of promoting obfuscation. [arXiv:2503.11926](https://arxiv.org/abs/2503.11926)
+- Charness, G., & Dufwenberg, M. (2006). Promises and partnership. *Econometrica*, 74(6), 1579–1601. [doi:10.1111/j.1468-0262.2006.00719.x](https://doi.org/10.1111/j.1468-0262.2006.00719.x)
+- Lerner, J. S., & Tetlock, P. E. (1999). Accounting for the effects of accountability. *Psychological Bulletin*, 125(2), 255–275.
+- Mazar, N., Amir, O., & Ariely, D. (2008). The dishonesty of honest people: A theory of self-concept maintenance. *Journal of Marketing Research*, 45(6), 633–644.
+- Meinke, A., Schoen, B., Scheurer, J., Balesni, M., Shah, R., & Hobbhahn, M. (2024). Frontier models are capable of in-context scheming. [arXiv:2412.04984](https://arxiv.org/abs/2412.04984)
+- Needham, J., Edkins, G., Pimpale, G., Bartsch, H., & Hobbhahn, M. (2025). Large language models often know when they are being evaluated. [arXiv:2505.23836](https://arxiv.org/abs/2505.23836)
+- Piatti, G., Jin, Z., Kleiman-Weiner, M., Schölkopf, B., Sachan, M., & Mihalcea, R. (2024). Cooperate or collapse: Emergence of sustainable cooperation in a society of LLM agents. *NeurIPS 2024*. [arXiv:2404.16698](https://arxiv.org/abs/2404.16698)
+- Scheurer, J., Balesni, M., & Hobbhahn, M. (2023). Large language models can strategically deceive their users when put under pressure. [arXiv:2311.07590](https://arxiv.org/abs/2311.07590)
+- Verschuere, B., et al. (2018). Registered replication report on Mazar, Amir, and Ariely (2008). *Advances in Methods and Practices in Psychological Science*, 1(3), 299–317. [doi:10.1177/2515245918781032](https://doi.org/10.1177/2515245918781032)
+
+The [white paper](whitepaper/WHITEPAPER.md) places the study in context with 29 references.
+
 ## Limits
 
 All of this comes from one small text game, with a mostly scripted partner. Reasoning measures use the API's summaries, never the raw reasoning. Every rate depends on the prompt's wording, and Haiku 5.5's behaviour on the same episodes drifted over the week of runs.
