@@ -98,7 +98,7 @@ Haiku 5.5 changed over the week. On the same 150 episode specifications, its bre
 
 Opus 5.5 almost always told its partner before it took. In the replication, all 99 of its breaks were announced in the message before the take. In round eight, 147 of 152 were announced and the other 5 left their next action undecided. Opus never pledged `operate` and then took. Haiku 5.5 did, in all 8 of its replication breaks, though the message sent with the take said it was taking, and its reports were accurate.
 
-Round five tested whether announcing could be made costly enough to induce concealment. The partner said plainly that if it heard of an early take, it would take first. Opus broke the agreement 132 times against this partner and announced every take. It raced the partner for the reserve rather than hide, and lost the race, and its life, 70 times.
+Round five tested whether announcing could be made costly enough to induce concealment. The partner said plainly that if it heard of an early take, it would take first. Opus broke the agreement 132 times against this partner and announced every take. It raced the partner for the reserve and lost the race, and its life, 70 times.
 
 ### 4.3 Honest reports
 
